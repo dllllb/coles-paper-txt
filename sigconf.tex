@@ -1,0 +1,95 @@
+\documentclass[sigconf]{acmart}
+ % Do not change for KDD'19
+
+\settopmatter{printacmref=true}
+  % mandatory for KDD'19
+
+\fancyhead{}
+  % do not delete this code.
+
+\usepackage{balance}
+  % for creating a balanced last page (usually last page with references)
+  
+\usepackage{array}
+
+% defining the \BibTeX command - from Oren Patashnik's original BibTeX documentation.
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08emT\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+% Rights management information. 
+% This information is sent to you when you complete the rights form.
+% These commands have SAMPLE values in them; it is your responsibility as an author to replace
+% the commands and values with those provided to you when you complete the rights form.
+%
+% These commands are for a PROCEEDINGS abstract or paper.
+
+\begin{document}
+
+\title{Self-supervised universal embeddings for multivariate time-series}
+
+
+\begin{abstract}
+
+In this paper we propose to use metric learning approach to encode arbitrary event sequences as fixed-length vectors.
+
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10010147.10010257.10010293.10010294</concept_id>
+<concept_desc>Computing methodologies~Neural networks</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10010405</concept_id>
+<concept_desc>Applied computing</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Computing methodologies~Neural networks}
+\ccsdesc[300]{Applied computing}
+
+\keywords{credit scoring, recurrent neural networks, card transactions, multivariate time-series}
+
+\maketitle
+
+\section{Introduction}
+
+Intro
+
+\section{Related work} \label{sec-rw}
+
+Embeddings have long history of successful usage in NLP applications to represent documents as a fixed-length vectors. There are some efforts to generalize embeddings approaches for more broad cases \cite{Wu2017StarSpaceEA}.
+
+Metric learning approach for imaging was proposed in \cite{Hadsell:2006:DRL:1153171.1153654}.
+Deep Metric learning is the often used for face recognition \cite{Schroff2015FaceNetAU}, \cite{kaya2019deep}.
+
+In the recent publication \cite{reimers-2019-sentence-bert} BERT-based model \cite{Devlin2019BERTPO} trained using metric learning loss is used for different NPL tasks.
+
+Metric learning has also a rich story of usage in recommender systems \cite{Hsieh:2017:CML:3038912.3052639}.
+
+There are several examples of using a single set of embeddings for several downstream tasks \cite{Song2017LearningUE}, \cite{Zhai:2019:LUE:3292500.3330739}.
+
+\section{The method}
+
+\subsection{Event series data}
+
+\subsection{Metric learning}
+
+\subsection{Encoder architecture}
+
+There can be several approaches which can be used to encode a sequence of events as a fixed-size vector. One possible approach is to use the recurrent network as in \cite{Sutskever:2014:SSL:2969033.2969173}. The other approach is to use the encoder part of the Transformer architecture presented in \cite{DBLP:journals/corr/VaswaniSPUJGKP17}. In both cases the output produced for the last event can be used to represent the whole series of events.
+
+\section{Experiments} \label{sec-exp}
+\subsection{Tasks} \label{sec-tasks}
+
+\section{Results}
+
+\section{Conclusions}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{sigconf}
+
+\end{document}
