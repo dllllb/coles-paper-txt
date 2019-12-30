@@ -51,13 +51,24 @@ In this paper we propose to use metric learning approach to encode arbitrary eve
 \ccsdesc[500]{Computing methodologies~Neural networks}
 \ccsdesc[300]{Applied computing}
 
-\keywords{credit scoring, recurrent neural networks, card transactions, multivariate time-series}
+\keywords{representation learning, recurrent neural networks, multivariate time-series}
 
 \maketitle
 
 \section{Introduction}
 
-Intro
+Self-supervised learning has been shown to be extremely effective in many fields, such as natural language processing (ELMO, BERT and other) or computer vision (...). Key advantage of self-supervised learning vs supervised learning, that it doesn't require a tagret, which allows us to use unlabelled or partially labeled datasets. Knowledge, learned through self-supervised learning, can be transferred to a target task via transfer learning (BERT) or embedding extraction (word2vec).
+
+In this paper we present a novel approach for self-supervised encoding of arbitrary event sequences, such as transactions data or clickstream data. Our method is based on metric learning approach. Originally metric learning was proposed for mapping images to a high dimensional feature space. In this space semantically similar images should be close to each other, whereas semantically dissimilar images should be far apart from each other.
+
+We propose the following method of applying metric learning to event sequences: from each sequence, we pick out several subsequences. The network is trained to produce close vectors for subsequences of the same sequence, and distant vectors for subsequences of different sequences. So, in terms of metric learning, classes are sequences, and instances of a class are subsequences.
+
+We consider several open datasets and show that the performance of the model trained only on embeddings extracted via our method is comparable to the performance of the network trained by the supervised method.
+Moreover, we show superiority of our embeddings over supervised approach on partially labeled data due to insufficient amount of the target to learn a deep model from scratch.
+
+Furthermore, the network trained on metric learning task can be used as a pre-trained model for a target task. In our experiments we show, that usage the pre-trained model requires significantly less amount of labeled data than supervised approach to achieve the same performance.
+
+The rest of the paper is organised as follows. In Section 2 we discuss the related work. In Section 3 we describe the proposed method. In Section 4 we present our experiments and in Section 5 the results of these experiments. Section 6 and 7 are dedicated to the discussion of our results and conclusions.
 
 \section{Related work} \label{sec-rw}
 
@@ -86,10 +97,11 @@ There can be several approaches which can be used to encode a sequence of events
 
 
 \subsection{Datasets} \label{sec-datasets}
-
-\textbf{DataLike}\footnote{https://vc.ru/data-like}, a story like prediction competition.
-
-\textbf{Age prediction competition}\footnote{https://onti.ai-academy.ru/competition}, a competition of using bank transactions for age prediction.
+\begin{enumerate}
+    \item \textbf{DataLike}\footnote{https://vc.ru/data-like}, a story like prediction competition.
+    \item \textbf{Age prediction competition}\footnote{https://onti.ai-academy.ru/competition}, a competition of using bank transactions for age prediction.
+    \item \textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/}, a competition of using bank transactions for gender prediction.
+\end{enumerate}
 
 \section{Results}
 
