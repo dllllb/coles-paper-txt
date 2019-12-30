@@ -1,2 +1,11 @@
 .ipynb_checkpoints
 .DS_Store
+sigconf.aux
+sigconf.bbl
+sigconf.blg
+sigconf.fdb_latexmk
+sigconf.fls
+sigconf.out
+sigconf.log
+sigconf.pdf
+sigconf.synctex.gz
