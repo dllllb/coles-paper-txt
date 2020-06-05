@@ -139,7 +139,7 @@ Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\
     \item Starting $s_e$ is independent, and the distribution of $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$.
     \item Horizon $T_e$ is independent and follows a power--law distribution on $[m,\infty]$.
 \end{enumerate}
-%First assumption is $\ldots$ \nt{to be continued}
+These assumptions correspond to a scenario where potential clients or users can appear at a service at a random moment for some random horizon.    %First assumption is $\ldots$ 
 \begin{thm}\label{thm:distribution}
 If sequences $\{x_e(t)\}$ in the dataset are generated from latent processes $\{\widehat{X}_e(t)\}$ as described above, then sub-sequences obtained by Algorithm~\ref{alg-slce-ss} from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the horizon $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy $p(T'_e=k)/p(T_e=k)\in [(\frac{m-1}{m})^{-\alpha},(\frac{k}{k-1/2})^{-\alpha}]$.
 \end{thm}
