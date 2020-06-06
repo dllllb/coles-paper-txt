@@ -18,7 +18,7 @@
 \title{Supplementary material for MeLES: Metric learning for event sequences with self-supervision}
 
 \author{
-Dmitrii Babaev\thanks{D. Babaev N. Ovsov and I. Kireev contributed equally to this work.} \\
+Dmitrii Babaev \\
 % dmitri.babaev@gmail.com
 Sberbank AI Lab
 \And
@@ -28,10 +28,10 @@ Sberbank AI Lab
 Nikita Ovsov \\
 Sberbank AI Lab
 \And
-Maria Ivanova \\
+Gleb Gusev \\
 Sberbank AI Lab
 \And
-Gleb Gusev \\
+Maria Ivanova \\
 Sberbank AI Lab
 \And
 Alexander Tuzhilin \\
@@ -43,11 +43,37 @@ New York University
 
 \maketitle
 
+\section{MeLES Method}
+
+\subsection{Batch generation}
+
+\begin{algorithm}
+\SetAlgoLined
+\textbf{hyperparameters:} $k$: number of sub-sequences to be produced. \\
+\textbf{input:} A sequence $S$ of length $l$. \\
+\textbf{output:} $S_1,...,S_k$: sub-sequences of $S$. \\
+
+\BlankLine
+Generate vector $inds$ of length $l$ with random integers from [1,k].\\
+ \For{$i\leftarrow 1$ \KwTo $k$}{
+ $S_i = S[inds == i]$
+ }
+\caption{Disjointed sub-sequences generation strategy}
+\label{alg-disj-ss}
+
+\end{algorithm}
+
+\subsection{Performance optimizations} \label{sec-perf-opt}
+
+\textbf{Pair distance calculation.} In order to select negative samples, we need to compute pair-wise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them on a hyper-sphere of unit radius. Since $D(A,B) = \sqrt{\sum_i(A_i - B_i)^2} = \sqrt{\sum_i A_i^2 + \sum_i B_i^2 - 2\sum_i A_i B_i} $ and $||A||= ||B||=1$, to compute the euclidean distance we only need to compute: $\sqrt{2 - 2(A \cdot B)}$.
+
+To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks. Hence, the computational complexity of the negative pair selection is $O(n^2h)$ where $h$ is the size of the output embeddings and $n$ is the size of the batch.
+
+\textbf{Embedding update calculation.} Encoder, based on RNN-type architecture like GRU~\cite{Cho2014LearningPR}, allows to calculate embedding $c_{t+k}$ by updating embedding $c_t$ instead of  calculating embedding $c_{t+k}$ from the whole sequence of past events $z_{1:t}$: $c_k = rnn(c_t, z_{t+1:k})$. We use this optimization to reduce inference time to update already existing person embeddings with new events, occurred after the calculation of embeddings. This is possible due to the recurrent nature of RNN-like networks.
+
 \section{Experiments} \label{sec-exp}
 
 \section{Datasets}
-
-
 
 We designed the method specially for the user behavior sequences~\cite{Ni2018PerceiveYU}. That sequences consist of discrete events per person in continuous time, for example,  behavior on websites, credit card transactions, etc. 
 
@@ -87,6 +113,10 @@ Another example of user behavior data is click-stream: the log of internet pages
 \end{table}
 
 
+
+
+
+
 In our research we used several publicly available datasets of bank transactions.
 \begin{enumerate}
     \item \textbf{Age group prediction competition}\footnote{https://onti.ai-academy.ru/competition} - the task is to predict the age group of a person. The dataset consists of 44M anonymized transactions representing 50k persons with a target labeled for only 30k of them (27M out of 44M transactions), for the other 20k persons (17M out of 44M transactions) label is unknown. Each transaction includes date, type (for example, grocery store, clothes, gas station, children's goods, etc.) and amount. We use all available 44M transactions for metric learning, excluding 10\% - for the test part of the dataset, and  5\% for the metric learning validation.
@@ -96,14 +126,14 @@ In our research we used several publicly available datasets of bank transactions
     \item \textbf{Data Science Bowl}\footnote{https://www.kaggle.com/c/data-science-bowl-2019} - the task is to predict the in-game assessments results based on the history of children gameplay data. The dataset consists of 12M gameplay events representing 4,6k children. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
     
     \item \textbf{Gender prediction competition}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling} - the task is to predict the age group of a client based on it retail purchase history. The dataset consists of ???M retail purchases representing ???k clients. Each purchase is characterized by time, product level, segment, amount, value, points received.
-    
-    
-    
-    
+
 \end{enumerate}
 
+The demography prediction tasks are popular in the marketing domain, e. g. both Google and Facebook Ad management consoles allows to target Ads to the specific demographic groups.
 
 \subsection{Experiment setup}
+
+The final set of hyper-parameters used for MeLES is shown in Table \ref{tab-hyper}.
 
 \begin{table}
 \centering
