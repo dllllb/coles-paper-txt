@@ -150,7 +150,7 @@ This theorem means that a sub-sequence obtained by Algorithm~\ref{alg-slce-ss} i
 The following procedure is used to create a batch during MeLES training. $N$ initial sequences are randomly taken for batch generation and $K$ sub-sequences are produced for each initial sequence. Pairs of sub-sequences produced from the same sequence are considered as positive samples and pairs from different sequences are considered as negative samples. Hence, after positive pair generation, each batch contains %$N \times K$ sub-sequences used as training samples. There are 
 $NK(K-1)/2$ positive pairs and $K^2N(N - 1)/2$ negative pairs.
 
-We consider several empirical strategies for sub-sequence generation to compare with Algorithm~\ref{alg-slce-ss}. The simplest strategy is the random sampling without replacement. 
+We consider several empirical strategies for sub-sequence generation to compare with Algorithm~\ref{alg-slce-ss}. The simplest strategy is the random sampling without replacement.
 One more strategy is to produce sub-sequences by random splitting of the initial sequence to several connected segments without intersection between them
 %To generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}
 (see supplementary material, Section "Batch generation"). The motivation is that intersections between sub-sequences may possibly lead to overfilling, since exact sub-sequences of events are the same and may be "remembered" without learning a deeper level of similarities.
