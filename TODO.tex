@@ -1,0 +1,115 @@
+\documentclass{article}
+%\usepackage{iclr2021_conference,times}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+\usepackage{booktabs}
+\usepackage{graphicx}
+%\usepackage[square,numbers]{natbib}
+\usepackage{makecell}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{subcaption}
+
+\usepackage{textcomp}
+\usepackage{amsthm}
+\usepackage{amsmath}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+
+\newcommand{\nt}[1]{{\bf [#1]}}
+\newcommand{\R}{\mathbb{R}}
+
+
+\title{TODO for the paper}
+
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{itemize}
+
+\section{TODO}
+
+\item Глеб: Добавить в RW статьи с гарантиями для contrastive learning, где используются размеченные пары: "A Theoretical Analysis of Contrastive Unsupervised Representation Learning" и другие, которые на нее ссылаются.
+
+\item Написать про альтернативные методы аугментации в других обоастях и почемы мы выбрали семплинг.
+
+\item проверить допущение про цикличность что оно применимо к датасетам / стационарность случайного процесса, проверить является ли мартингалом или нет, транзакции это семплы случайного процесса/ Ахмед Умяров  acm transaction on the web statistical test (это что то сложное)
+
+\section{DONE}
+
+\item проверить допущение про power law (график есть, нужно место, откуда на него сослаться)
+
+
+\item ГГ - написать побольше про домен (тут надо подумать что, немного уже добавили во введение)
+
+
+\item Into: переписать последние 3 абзаца, особенно обдумать contribution  1. метод генерации позитивных примеров, 2. мы первые кто предлагает теоретическое обоснование 3. предлагаем для нового домена 
+
+
+\item актуализировать результаты в таблицах по подбору параметров
+
+\item пересчитать fine-tuning в финальной таблице относительно self-supervised
+
+
+\item таблицу 2 переделать по формату и может быть перенести в Apendix
+
+\item поставить problem set и background в начале секции 3, секцию 3.1
+
+\item  Одна ссылка на supervised learning (KDD), это мало
+
+\item Проверить на 20 статьях с ICLR в начале или конце Related Work в начале -3, в конце - 0
+
+\item Почему мы не реализвали как бейзлайн Хинтона/ Написать что работа Хинтона была параллельно с нами
+
+\item поискать таблицы, которые можно убрать в appendix
+
+\item related work: Contrastive learning framework: https://towardsdatascience.com/a-framework-for-contrastive-self-supervised-learning-and-designing-a-new-approach-3caab5d29619
+
+\item Добавить новую статью https://arxiv.org/abs/2006.07733 в Related Work
+
+\item вставить в эксперименты (выводы) что в крупном европейском банке это добавило несколько джини на широком спектре приложений, включая скоринг, рекомендации и тд
+
+\item Conclusions: метод работает в большом банке метод незаменим для широкого спектра финансовых организаций интернет компаний и телеком и ретеил 
+
+\item во введении написать что наш метод работает в крупном банке (подумать)
+
+\item related work: https://www.ntu.edu.sg/home/XLLI/publication/WSDM.pdf
+
+\item Написать в конце related work - однако такие то проблемы не были освящены в этих статьях, поэтому вот дырка которую мы затыкаем
+
+\item убрать в 3 и 4 
+секции подсекции, жирным написать в начале название подсекции (я бы все же не стал, там есть под-подсекции)
+
+\item добавить описание датасета Росбанк
+
+\item добравить описание новых бейзлайнов
+
+\item добавить результаты датасета Росбанк
+
+\item добравить результаты новых бейзлайнов
+
+\item убрать gender датасет из описания, таблиц и графиков.
+
+\item обновить графики semi-supervised, поменять название метода
+
+\item Добавить в related work: Contrastive Learning применяли в supervised learning for DES?
+\begin{itemize}
+\item "HyperML: A Boosting Metric Learning Approach in Hyperbolic Space for Recommender Systems" (это не подходит, каждая пара user+item рассматтривается отдельно)
+\item "Contrastive Learning for Debiased Candidate Generation in Large-Scale Recommender Systems"\ Contrastive Learning + CPC (Contrastive Learning на последовательностях кликов, обучается на таргет, т. к. таргет часть последовательности, то то же самое что и CPC)
+\item KDD-20: "Disentangled Self-Supervision in Sequential Recommenders" Contrastive Learning + self-supervision??? (Contrastive Learning + self-supervision на последовательностях кликов, последовательность делится пополам на до/после в произвольном моменте времени, часть "после" переворачивается. Обучается сразу несколько версий эмбеддинга)
+\item "Self-supervised Learning for Deep Models in Recommendations" Contrastive Learning + Augmentation??? (Похоже на то, что у нас, но нет поседовательностией, вместо них либо текст либо табличные признаки)
+\item CIKM-20: "S3-Rec: Self-Supervised Learning for Sequential Recommendation with Mutual Information Maximization"\ (self-supervision на последовательностях покупок, но не contrastive learning a  Cloze task из BERT.
+\end{itemize}
+
+\end{itemize}
+
+\end{document}
