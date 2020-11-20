@@ -65,36 +65,36 @@ consistently outperform other methods on different downstream tasks.
 
 \section{Introduction} \label{sec-intro}
 
-%The size of the dataset is crucial for performance of modern supervised learning techniques~\citep{Sun2017RevisitingUE}. However, considering the rapid emergence of new applications and tasks in different domains, it is not possible to collect enough labeled data for many real world scenarios. This problem motivates extensive research~\citep{Tan2018ASO, Pan2010ASO} in the area of knowledge transfer where a model trained for one task can be further used as a good starting point for training in other tasks. 
+%The size of the dataset is crucial for the performance of modern supervised learning techniques~\citep{Sun2017RevisitingUE}. However, considering the rapid emergence of new applications and tasks in different domains, it is not possible to collect enough labeled data for many real-world scenarios. This problem motivates extensive research~\citep{Tan2018ASO, Pan2010ASO} in the area of knowledge transfer where a model trained for one task can be further used as a good starting point for training in other tasks. 
 
-A promising and rapidly growing approach known as self-supervised learning\footnote{See, e.g., keynote by Yann LeCun at ICLR-20: https://www.iclr.cc/virtual\_2020/speaker\_7.html} is the main choice for pre-training in situations where amount of labeled data for the target task of interest is limited. %The idea of self-supervised learning is to learn internal patterns of the input data based on a convenient synthetic task encouraging exploration without any additional information about "golden truth" output ~\citep{Peters2018DeepCW, Devlin2019BERTPO, Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
+A promising and rapidly growing approach known as self-supervised learning\footnote{See, e.g., keynote by Yann LeCun at ICLR-20: https://www.iclr.cc/virtual\_2020/speaker\_7.html} is the main choice for pre-training in situations where the amount of labeled data for the target task of interest is limited. %The idea of self-supervised learning is to learn internal patterns of the input data based on a convenient synthetic task encouraging exploration without any additional information about "golden truth" output ~\citep{Peters2018DeepCW, Devlin2019BERTPO, Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
 %Self-supervised learning is the main choice for pre-training in situations where the amount of labeled data for the target task of interest is very limited.
-Most of research in the area of self-supervised learning has been focused on the core machine learning domains, including NLP (e.g., ELMO~\citep{Peters2018DeepCW}, BERT~\citep{Devlin2019BERTPO}), speech (e.g., CPC~\citep{Oord2018RepresentationLW}) and computer vision~\citep{Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
+Most of the research in the area of self-supervised learning has been focused on the core machine learning domains, including NLP (e.g., ELMO~\citep{Peters2018DeepCW}, BERT~\citep{Devlin2019BERTPO}), speech (e.g., CPC~\citep{Oord2018RepresentationLW}) and computer vision~\citep{Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
 %There are also special self-supervised methods designed for continuous sequences, such as CPC~\citep{Oord2018RepresentationLW} for speech. 
 %//most world corporate businesses (financial institutions, retail, ) generate sequential user data and //
-However, there has been very little research on self-supervised learning in the domain of discrete event sequences, including  user behavior sequences~\citep{Ni2018PerceiveYU} such as credit card transactions at banks, phone calls and messages at telecom, purchase history at retail and click-stream data of online services. Produced in many business applications, such data is a major key to growth of modern companies. User behavior sequence is attributed to a person and captures regular and routine actions of certain type.
+However, there has been very little research on self-supervised learning in the domain of discrete event sequences, including  user behavior sequences~\citep{Ni2018PerceiveYU} such as credit card transactions at banks, phone calls and messages at telecom, purchase history at retail and click-stream data of online services. Produced in many business applications, such data is a major key to the growth of modern companies. User behavior sequence is attributed to a person and captures regular and routine actions of a certain type.
 %, e.g., transactions, search queries, purchase history, phone calls and messages. 
 The analysis of these sequences constitutes an  important sub-field of machine learning~\citep{Laxman2008StreamPU, Wiese2009CreditCT, Zhang2017CreditRA, Bigon2019PredictionIV}.
 
-NLP, audio and computer vision domains are similar in the sense that the data of this type is "continuous": a short term in NLP can be accurately reconstructed from its context (like a pixel from its neighbouring pixels). This fact underlies popular NLP approaches for self-supervision such as BERT’s Cloze task~\citep{Devlin2019BERTPO} and approaches for self-supervision in audio and computer vision, like CPC~\citep{Oord2018RepresentationLW}. In contrast, for many types of event sequence data, a single token cannot be determined using its nearby tokens, because the mutual information between a token and its context is small. For this reason, most state-of-the-art self-supervised methods are not applicable to event sequence data.
+NLP, audio and computer vision domains are similar in the sense that the data of this type is "continuous": a short term in NLP can be accurately reconstructed from its context (like a pixel from its neighboring pixels). This fact underlies popular NLP approaches for self-supervision such as BERT’s Cloze task~\citep{Devlin2019BERTPO} and approaches for self-supervision in audio and computer vision, like CPC~\citep{Oord2018RepresentationLW}. In contrast, for many types of event sequence data, a single token cannot be determined using its nearby tokens, because the mutual information between a token and its context is small. For this reason, most state-of-the-art self-supervised methods are not applicable to event sequence data.
 
-In this paper, we propose \emph{COntrastive Learning for Event Sequences (CoLES)} method that learns low-dimensional representations of discrete event sequences. It is based on a novel theoretically grounded data augmentation strategy, which adapts the ideas of contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB} to the discrete event sequences domain in a self-supervised setting.
-%Most of existing contrastive learning methods have been successfully applied in core machine learning domains. 
+In this paper, we propose the \emph{COntrastive Learning for Event Sequences (CoLES)} method that learns low-dimensional representations of discrete event sequences. It is based on a novel theoretically grounded data augmentation strategy, which adapts the ideas of contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB} to the discrete event sequences domain in a self-supervised setting.
+%Most of the existing contrastive learning methods have been successfully applied in core machine learning domains. 
 The aim of contrastive learning is to represent semantically similar objects (\textit{positive pairs} of images, video, audio, etc.) closer to each other, while dissimilar ones (\textit{negative pairs}) further away. Positive pairs are obtained for training either {\it explicitly}, e.g., in a manual labeling process or {\it implicitly} using different data augmentation strategies (\cite{Falcon2020AFF}). We treat explicit cases as a {\it supervised} approach and implicit cases as a {\it self-supervised} one. In most applications, where each person is represented by one sequence of events, there are no explicit positive pairs, and thus only self-supervised approaches are applicable. Our CoLES method is self-supervised and based on the observation that event sequences usually possess periodicity and repeatability of their events. We propose and theoretically justify a new augmentation algorithm, which generates sub-sequences of an observed event sequence and uses them as different high-dimensional 
 views of the same (sequence) object for contrastive learning.
 
-Representations produced by the CoLES model can be used directly as a fixed vectors of features in some supervised downstream task (e. g. classification task) similarly to~\citep{Mikolov2013EfficientEO, Song2017LearningUE, Zhai2019LearningAU}. Alternatively, the trained CoLES model can be fine-tuned~\citep{Devlin2019BERTPO} for the specific downstream task.
+Representations produced by the CoLES model can be used directly as a fixed vector of features in some supervised downstream task (e. g. classification task) similarly to~\citep{Mikolov2013EfficientEO, Song2017LearningUE, Zhai2019LearningAU}. Alternatively, the trained CoLES model can be fine-tuned~\citep{Devlin2019BERTPO} for the specific downstream task.
 We applied CoLES to several user behavior sequence datasets with different downstream classification tasks. When used directly as feature vectors, CoLES representations achieve strong performance comparable to the hand-crafted features produced by data scientists.
-We demonstrate that fine-tuned CoLES representations consistently outperform methods based on other representations by a significant margin. %Moreover, we show superiority of CoLES embeddings over the supervised approach applied to the partially labeled raw data due to insufficient amount of the target to learn a sufficiently complex model from scratch.
+We demonstrate that fine-tuned CoLES representations consistently outperform methods based on other representations by a significant margin. %Moreover, we show the superiority of CoLES embeddings over the supervised approach applied to the partially labeled raw data due to an insufficient amount of the target to learn a sufficiently complex model from scratch.
 We provide the full source code for all the experiments described in the paper\footnote{https://github.com/***/*** (the link was anonymized for the double-blind peer review purposes)}.
 
-This paper makes the following contributions: (1) We present the CoLES method that adapts contrastive learning in the self-supervised setting to discrete event sequence domain. (2) We propose a novel theoretically grounded augmentation method for discrete event sequences. (3) We demonstrate that CoLES consistently outperforms previously introduced supervised, self--supervised and semi--supervised learning baselines adapted to the event sequence domain. We also conducted a pilot study on event sequence data 
+This paper makes the following contributions: (1) We present the CoLES method that adapts contrastive learning in the self-supervised setting to the discrete event sequence domain. (2) We propose a novel theoretically grounded augmentation method for discrete event sequences. (3) We demonstrate that CoLES consistently outperforms previously introduced supervised, self-supervised and semi-supervised learning baselines adapted to the event sequence domain. We also conducted a pilot study on event sequence data 
 %(clients card transactions and entities transfers) 
 of a large European bank. We tested CoLES against the baselines and achieved superior performance on downstream tasks which produced significant financial gains. %for the bank.
-% approaches both in supervised and the semi-supervised learning scenarios. %on four different user behavior sequence datasets.
+% approaches both in supervised and semi-supervised learning scenarios. %on four different user behavior sequence datasets.
 %we also propose a new theoretically grounded data augmentation strategy our method significantly outperforms other approaches adapted to event sequences domain
 
-The rest of the paper is organised as follows. In the next section, we discuss related studies on self-supervised and contrastive learning. In Section~\ref{sec-method} we introduce our new method CoLES for discrete event sequences. In Section~\ref{sec-exp} we demonstrate that CoLES outperforms several strong baselines including previously proposed contrastive learning methods adapted to event sequence datasets. Section~\ref{sec-conclusions} is dedicated to the discussion of our results and conclusions.
+The rest of the paper is organized as follows. In the next section, we discuss related studies on self-supervised and contrastive learning. In Section~\ref{sec-method} we introduce our new method CoLES for discrete event sequences. In Section~\ref{sec-exp} we demonstrate that CoLES outperforms several strong baselines including previously proposed contrastive learning methods adapted to event sequence datasets. Section~\ref{sec-conclusions} is dedicated to the discussion of our results and conclusions.
 
 \section{Related work} \label{sec-rel-work}
 
@@ -104,15 +104,15 @@ The aim of these studies is to identify the object based on its sample~\citep{Sc
 
 For situations when positive pairs are not available or their amount is limited, augmentation techniques were proposed in the computer vision domain. One of the first frameworks with augmentation  was proposed by \cite{Dosovitskiy2014DiscriminativeUF}. In this work, surrogate classes for model training were introduced using augmentations of the same image. Several recent works \citep{Bachman2019LearningRB, He2019MomentumCF, Chen2020ASF} extended this idea by applying contrastive learning methods, they are nicely summarised by \cite{Falcon2020AFF}. Although augmentation techniques proposed in these studies provide good performance empirically, we note that no theoretical background behind different augmentation approaches has been proposed so far.
 
-Contrastive Predictive Coding (CPC) is a self-supervised learning approach proposed for non-discrete sequential data \citep{Oord2018RepresentationLW}. CPC extracts meaningful representations by predicting latent representations of future observations of the input sequence and using autoregressive methods. CPC representations demonstrated strong performance on four distinct domains: audio, computer vision, natural language and reinforcement learning. We adapted CPC based approach to the domain of discrete event sequences and compared it with our CoLES approach (see Section~\ref{sec-res}).
+Contrastive Predictive Coding (CPC) is a self-supervised learning approach proposed for non-discrete sequential data \citep{Oord2018RepresentationLW}. CPC extracts meaningful representations by predicting latent representations of future observations of the input sequence and using autoregressive methods. CPC representations demonstrated strong performance on four distinct domains: audio, computer vision, natural language and reinforcement learning. We adapted the CPC based approach to the domain of discrete event sequences and compared it with our CoLES approach (see Section~\ref{sec-res}).
 
 %One of the difficulties with applying a contrastive learning approach to the discrete event sequences is that the notion of semantic similarity as well as dissimilarity requires underlying domain knowledge and human labor-intensive labeling process to constrain positive and negative examples.
 
 %In the computer vision domain, there are many other self-supervised approaches besides contrastive learning, they are nicely summarized in~\citep{Jing2020SelfsupervisedVF}. One of the common approaches to learn self-supervised representations is either traditional autoencoder~\citep{Rumelhart1986LearningIR} or variational autoencoder~\citep{Kingma2014AutoEncodingVB}. These methods are widely used for images, text and audio or aggregated event sequence data~\citep{Mancisidor2019LearningLR}. Although autoencoders have been successfully used in several domains listed above, they have not been applied to discrete event sequences, mainly due to the challenges of defining distances between the input and the output reconstructed sequences.
 
-%There are papers dedicated to supervised learning for discrete event sequences~\citep{Wiese2009CreditCT, Tobback2019RetailCS, Babaev2019ETRNNAD, chatterjee2003modeling, sinha2014your}, but self-superivized pre-training is not used in those papers.
+%There are papers dedicated to supervised learning for discrete event sequences~\citep{Wiese2009CreditCT, Tobback2019RetailCS, Babaev2019ETRNNAD, chatterjee2003modeling, sinha2014your}, but self-supervised pre-training is not used in those papers.
 
-Independently of our study, several papers appeared in the past few months on self-supervision for user behaviour sequences in the recommender systems domain. \cite{Zhou2020ContrastiveLF} proposed to use CPC-like approach for self-supervised learning on user clicks history. \cite{Ma2020DisentangledSI} used an auxiliary self-supervised loss on click sequences. \cite{Zhou2020S3RecSL} proposed "Cloze" task from BERT \citep{Devlin2019BERTPO} for self-supervision on purchase sequences. Finally, \cite{Yao2020SelfsupervisedLF} adapts SimCLR-like approach for text-based tasks and tabular data. Although there has been significant progress on contrastive learning, augmentation for contrastive learning does not have any theoretical grounding and is understudied in the domain of discrete event sequences.
+Independently of our study, several papers appeared in the past few months on self-supervision for user behavior sequences in the recommender systems domain. \cite{Zhou2020ContrastiveLF} proposed to use a CPC-like approach for self-supervised learning on user clicks history. \cite{Ma2020DisentangledSI} used an auxiliary self-supervised loss on click sequences. \cite{Zhou2020S3RecSL} proposed "Cloze" task from BERT \citep{Devlin2019BERTPO} for self-supervision on purchase sequences. Finally, \cite{Yao2020SelfsupervisedLF} adapts a SimCLR-like approach for text-based tasks and tabular data. Although there has been significant progress on contrastive learning, augmentation for contrastive learning does not have any theoretical grounding and is understudied in the domain of discrete event sequences.
 
 %We briefly review its general idea. Assume that each entity $e$ is associated with a probabilistic distribution $P_e$ over all possible samples (e.g., in face recognition, a person is a distribution over all his/her photos that can potentially appear in the life). The idea is to train encoder $M$ such that samples of the same or similar entities represented in the feature space are closer to each other than samples of different (dissimilar) entities. Mapping $M$ defines a pushforward $P_M(e):=M\#P_e$ of distribution $P_e$ in the feature space $\R^d$ for each entity $e$. In these terms, contrastive learning tends to separate distributions $P_M(e)$ of different entities $e$ as much as possible.
 
@@ -131,7 +131,7 @@ in the two ways: (1) $c_e$ can be used as a feature vector for a task--specific 
 
 While we have no access to the latent processes $\{X_e(t)\}$, we need to use augmentation. Most augmentation techniques proposed earlier for continuous domains (such as image jitter, color jitter or random gray scale in computer vision, see \cite{Falcon2020AFF}) are not applicable to discrete events. A possible approach for augmentation is generating
 {\it sub-sequences} of the same event sequence $\{x_e(t)\}$. The idea proposed below resembles the bootstrap method~\citep{Efron1994Bootstrap}, which enables to generate several bootstrap samples using only one sample of independent datapoints of a latent distribution. However, our setting is different, since we have no independent observations, so we should rely on different data assumptions. 
-The key property of event sequences that represent life activity is periodicity and repeatability of its events (see Figure~\ref{fig-subseq-kl} in the Appendix~\ref{app-sec-datasets} for the empyrical observations of this properties for the considered datasets). This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
+The key property of event sequences that represent life activity is periodicity and repeatability of its events (see Figure~\ref{fig-subseq-kl} in the Appendix~\ref{app-sec-datasets} for the empyrical observations of these properties for the considered datasets). This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
 
 
 \begin{figure}[htbp]
@@ -185,10 +185,10 @@ See Appendix~\ref{app-sec-proof} for the proof of Theorem~\ref{thm:distribution}
 \textbf{Batch generation.} The following procedure creates a batch during CoLES training. $N$ initial sequences are randomly taken and $K$ sub-sequences are produced for each of them. Pairs of sub-sequences of the same sequence are used as positive samples and pairs from different sequences are used as negative ones.
 %Hence, after positive pair generation, each batch contains %$N \times K$ sub-sequences used as training samples. There are $NK(K-1)/2$ positive pairs and can potentially have $K^2N(N - 1)/2$ negative pairs (not all negative pairs are considered, due to negative sampling).
 
-We consider several baseline empirical strategies for sub-sequence generation to compare with Algorithm~\ref{alg-slce-ss}. The simplest strategy is the random sampling without replacement.
-One more strategy is to produce sub-sequences by random splitting of the initial sequence to several connected segments without intersection between them
+We consider several baseline empirical strategies for the sub-sequence generation to compare with Algorithm~\ref{alg-slce-ss}. The simplest strategy is random sampling without replacement.
+One more strategy is to produce sub-sequences by the random splitting of the initial sequence to several connected segments without intersection between them
 %To generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}
-(see Appendix~\ref{app-sec-bg}). %The motivation is that intersections between sub-sequences may possibly lead to overfilling, since exact sub-sequences of events are the same and may be "remembered" without learning a deeper level of similarities.
+(see Appendix~\ref{app-sec-bg}). %The motivation is that intersections between sub-sequences may possibly lead to overfilling since exact sub-sequences of events are the same and may be "remembered" without learning a deeper level of similarities.
 
 % Note, that the order of events in generated sub-sequences is always preserved.
 
@@ -201,10 +201,10 @@ One more strategy is to produce sub-sequences by random splitting of the initial
 $ \mathcal{L} =  (1-Y)\frac{1}{2}(D_W^i)^2 +Y*\frac{1}{2}\{max(0,m-D_W^i)\}^2 $, where $D_W^i$ is a distance function between embeddings in i-th labeled sample pair, $Y$ is a binary variable identifying that the pair is positive.
 As proposed in~\citep{Hadsell2006DimensionalityRB}, we use euclidean distance function: $D_W^i = D(A,B) = \sqrt{\sum_i(A_i - B_i)^2}$.
 
-\textbf{Pair distance calculation.} In order to select negative samples, we need to compute pairwise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them onto a hyper-sphere of unit radius (see Appendix~\ref{app-sec-perf-opt}).
+\textbf{Pair distance calculation.} In order to select negative samples, we need to compute the pairwise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them onto a hyper-sphere of the unit radius (see Appendix~\ref{app-sec-perf-opt}).
 
 
-\textbf{Negative sampling} is a way to address the following challenge of the contrastive learning approach: using all pairs of samples can be inefficient: for example, some of the negative pairs are already distant enough, thus these pairs are not valuable for the training~\citep{SimoSerra2015DiscriminativeLO, Schroff2015FaceNetAU}. Hence, only a part of possible negative pairs in the batch are used during loss calculation. We compared most popular choices for negative sampling applied for CoLES, see Section~\ref{sec-res} for details.
+\textbf{Negative sampling} is a way to address the following challenge of the contrastive learning approach: using all pairs of samples can be inefficient: for example, some of the negative pairs are already distant enough, thus these pairs are not valuable for the training~\citep{SimoSerra2015DiscriminativeLO, Schroff2015FaceNetAU}. Hence, only a part of possible negative pairs in the batch are used during loss calculation. We compared the most popular choices for negative sampling applied for CoLES, see Section~\ref{sec-res} for details.
 
 \subsection{Encoder architecture} \label{sec-enc-arch}
 
@@ -213,9 +213,9 @@ To embed a sequence of events to the fixed-size vector, we use an encoder networ
 \textbf{The event encoder} $e$ takes the set of attributes of each single event $x_t$ and outputs its representation in the latent space $\R^d$: $z_t = e(x_t)$. The event encoder consists of several embedding layers and batch normalization layers. Each categorical attribute is encoded by its corresponding embedding layer. Batch normalization is applied to numerical attributes of events. Outputs of all embedding and batch normalization layers are concatenated to produce latent representation $z_t$.
 
 \textbf{The sequence encoder} $s$ takes latent representations of the sequence of events: $ z_{1:T} = z_1, z_2, \cdots z_T $ and outputs the representation of the whole sequence $c_t$ in the time-step $t$: $ c_t = s(z_{1:t}) $.
-Several approaches can be used to encode a sequence~\citep{Cho2014LearningPR, Vaswani2017AttentionIA} . In our experiments we use the recurrent network (RNN) similarly to~\citep{Sutskever2014SequenceTS}. The output produced for the last event is used to represent the whole sequence of events. In case of RNN the last output $h_t$ is a representation of the sequence.
+Several approaches can be used to encode a sequence~\citep{Cho2014LearningPR, Vaswani2017AttentionIA} . In our experiments we use the recurrent network (RNN) similarly to~\citep{Sutskever2014SequenceTS}. The output produced for the last event is used to represent the whole sequence of events. In the case of RNN the last output $h_t$ is a representation of the sequence.
 
-To summarise, CoLES method consists of three major ingredients: event sequence encoder, positive and negative pair generation strategy and the loss function for contrastive learning.
+To summarise, the CoLES method consists of three major ingredients: event sequence encoder, positive and negative pair generation strategy and the loss function for contrastive learning.
 
 %In the next section, we describe our experiments of the comparison of the proposed method with several strong baselines on several public datasets.
 
@@ -223,13 +223,13 @@ To summarise, CoLES method consists of three major ingredients: event sequence e
 
 We compare our method with existing baselines on several publicly available datasets from various data science competitions. We chose datasets with sufficient amounts of discrete events per user.
 
-\textbf{Age group prediction competition}\footnote{https://ods.ai/competitions/sberbank-sirius-lesson}. The dataset of 44M anonymized credit card transactions representing 50k persons was used to predict the age group of a person. The label is known for 30k persons, other 20k are unlabelled. The group ratio is balanced in the dataset. Each transaction includes date, type, and the amount being charged.
+\textbf{Age group prediction competition}\footnote{https://ods.ai/competitions/sberbank-sirius-lesson}. The dataset of 44M anonymized credit card transactions representing 50k persons was used to predict the age group of a person. The label is known for 30k persons, other 20k are unlabelled. The group ratio is balanced in the dataset. Each transaction includes the date, type, and amount being charged.
 
-%\textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/}. The dataset of 6,8M anonymized card transactions representing 15K clients was used to predict a gender. Each transaction is characterized by date, type, amount and Merchant Category Code.
+%\textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/}. The dataset of 6,8M anonymized card transactions representing 15K clients was used to predict gender. Each transaction is characterized by date, type, amount and Merchant Category Code.
 
 \textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M anonymized card transactions representing 10K clients was used to predict a churn probability. Each transaction is characterized by date, type, amount and Merchant Category Code. 5k clients have labels, 5.2k clients haven't labels. Target is binary, almost balanced with proportions 0.55 and 0.45.
 
-\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}. The task is to predict the in-game assessment results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labelled, the remaining 312k gameplays are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
+\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}. The task is to predict the in-game assessment results based on the history of children's gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labeled, the remaining 312k gameplays are not labeled. Each gameplay event is characterized by timestamp, event code, the incremental counter of events within a game session, time since the start of the game session, etc.
 
 \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
 
@@ -237,8 +237,8 @@ As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-datasets}), the
 
 %\textbf{Experimental setup.}
 
-\textbf{Dataset split.} For each dataset, we set apart 10\% persons from the labeled part of the data as the \textit{test set} that we used for evaluation of different models. The rest 90\% of labeled data and unlabeled data constitute our \textit{training set} used for learning. For all methods, random search on 5-fold cross-validation over the training set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance are then chosen.
-For learning of semi-supervised/self-supervised techniques (including CoLES), we used all transactions of training sets including unlabeled data. The unlabelled parts of the datasets were ignored while training supervised models.
+\textbf{Dataset split.} For each dataset, we set apart 10\% persons from the labeled part of the data as the \textit{test set} that we used for evaluation of different models. The rest 90\% of labeled data and unlabeled data constitute our \textit{training set} used for learning. For all methods, a random search on 5-fold cross-validation over the training set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance are then chosen.
+For the learning of semi-supervised/self-supervised techniques (including CoLES), we used all transactions of training sets including unlabeled data. The unlabelled parts of the datasets were ignored while training supervised models.
 
 \textbf{Performance.} Neural network training was performed on a single Tesla P-100 GPU card. For the training part of CoLES, the single training batch is processed in 142 milliseconds. For example, in the age group prediction dataset the single training batch contains 64 unique persons with 5 sub-sequences per person, i.e. 320 training sub-sequences in total, the mean number of transactions in a sub-sequence is 90, hence each batch contains about 28800 transactions.
 
@@ -249,21 +249,21 @@ For learning of semi-supervised/self-supervised techniques (including CoLES), we
 %We compare our CoLES method with the following baselines.
 
 \textbf{LightGBM.} We consider the Gradient Boosting Machine (GBM) method~\citep{Friedman2001GreedyFA} on hand-crafted features. GBM can be considered as a strong baseline in cases of tabular data with heterogeneous features.
-% In particular, GBM-based approaches achieve the state-of-the-art results in a variety of practical tasks including web searches, weather forecasting, fraud detection, and many others
+% In particular, GBM-based approaches achieve state-of-the-art results in a variety of practical tasks including web searches, weather forecasting, fraud detection, and many others
 ~\citep{Wu2009AdaptingBF, Vorobev2019LearningTS, Zhang2015AGB, Niu2019ACS}.
-GBM based model requires a large number of hand-crafted aggregate features produced from the raw transactional data. An example of an aggregate feature is an average spending amount in some category of merchants, such as hotels of the entire transaction history.
+GBM based model requires a large number of hand-crafted aggregate features produced from the raw transactional data. An example of an aggregate feature is an average spending amount in some categories of merchants, such as hotels of the entire transaction history.
 We used LightGBM~\citep{Ke2017LightGBMAH} implementation of the GBM algorithm with nearly 1,000 hand-crafted features for the application. The details of producing hand-crafted features can be found in the Appendix~\ref{app-sec-hand}.
 
 \textbf{Self-supervised baselines.} 
 
-\textbf{NSP.} We consider a simple baseline inspired by the \textit{next sentence prediction} task used in BERT~\citep{Devlin2019BERTPO}. Specifically, we generate two sub-sequences A and B, in a way that 50\% of the time B is the sub-sequence from the same sequence as A and follows it (positive pair), and 50\% of the time it is a random sub-sequence taken from other sequence (negative pair).
+\textbf{NSP.} We consider a simple baseline inspired by the \textit{next sentence prediction} task used in BERT~\citep{Devlin2019BERTPO}. Specifically, we generate two sub-sequences A and B, in a way that 50\% of the time B is the sub-sequence from the same sequence as A and follows it (positive pair), and 50\% of the time it is a random sub-sequence taken from another sequence (negative pair).
 
 \textbf{SOP.} Another simple baseline is the same as \textit{sequence order prediction} task from ALBERT~\citep{Lan2020ALBERTAL}. It uses two consecutive sub-sequences as a positive pair, and two consecutive sub-sequences with swapped order as a negative pair.
 
-\textbf{RTD.} We also adapt the \textit{replaced token detection} approach from ELECTRA~\citep{Clark2020ELECTRAPT} for event sequences as a baseline for our research. We replaced 15\% of events from sequence with random events, taken from other sequences and train a model to predict whether an event is replaced or not.
+\textbf{RTD.} We also adapt the \textit{replaced token detection} approach from ELECTRA~\citep{Clark2020ELECTRAPT} for event sequences as a baseline for our research. We replaced 15\% of events from the sequence with random events, taken from other sequences and train a model to predict whether an event is replaced or not.
 
-\textbf{CPC.} As the last self-supervised baseline, we selected the recently proposed Contrastive Predictive Coding (CPC)~\citep{Oord2018RepresentationLW}, a self-supervised learning method that produced excellent performance on sequential data of such traditional domains as audio, computer vision, reinforcement learning and recommender systems~\citep{Zhou2020ContrastiveLF}.
-% We adapted the CPC method to the discrete event sequences by making the model task to distinguish true future events from other types of events by using series of previous events as an input.
+\textbf{CPC.} As the last self-supervised baseline, we selected the recently proposed Contrastive Predictive Coding (CPC)~\citep{Oord2018RepresentationLW}, a self-supervised learning method that produced an excellent performance on sequential data of such traditional domains as audio, computer vision, reinforcement learning and recommender systems~\citep{Zhou2020ContrastiveLF}.
+% We adapted the CPC method to the discrete event sequences by making the model task to distinguish true future events from other types of events by using a series of previous events as an input.
 
 \textbf{Supervised learning}. In addition to the aforementioned baselines, we compare our method with a supervised learning approach where the encoder network $e$ (see Section~\ref{sec-enc-arch}) and the classification sub-network $h$ are jointly trained on the downstream task target, i. e. the classification sub-network takes encoder output and produces a prediction: $\hat{y} = h(e(x))$. One-layer neural net with softmax activation is used as $h$. Note that no pre-training is used in this case.
 
@@ -290,12 +290,12 @@ Note that all neural network baselines use the same architecture of the encoder 
 \label{tab-pair-gen}
 \end{table}
 
-\textbf{Features of CoLES.} To evaluate the proposed method of sub-sequence generation we compared it with two alternative strategies described in Section~\ref{sec-training}. The results are presented in Table~\ref{tab-pair-gen}. The proposed random slices sub-sequence generation strategy significantly outperforms alternative strategies, what confirm theoretical results (see Section \ref{sec-theory}). Also, note that random samples strategy is similar to the augmentation strategy proposed by \cite{Yao2020SelfsupervisedLF}, and random disjoint samples strategy is similar to sub-sequence generation proposed by \cite{Ma2020DisentangledSI}.
+\textbf{Features of CoLES.} To evaluate the proposed method of sub-sequence generation we compared it with two alternative strategies described in Section~\ref{sec-training}. The results are presented in Table~\ref{tab-pair-gen}. The proposed random slices sub-sequence generation strategy significantly outperforms alternative strategies, what confirm theoretical results (see Section \ref{sec-theory}). Also, note that the random samples strategy is similar to the augmentation strategy proposed by \cite{Yao2020SelfsupervisedLF}, and the random disjoint samples strategy is similar to sub-sequence generation proposed by \cite{Ma2020DisentangledSI}.
 
 We evaluated several possible loss functions and found that contrastive loss that can be considered as the basic variant of contrastive learning loss, performs on par or better than other losses on the downstream tasks (see Appendix~\ref{app-sec-design}, Table~\ref{tab-loss-type}). This means that improvements obtained by more recent losses in object recognition tasks does not necessarily lead to gains in other downstream tasks.
-%an increase in model performance on the contrastive learning task, measured as quality of the object recognition task, which is usually the case for more advanced losses does not necessarily lead to the performance increase on downstream tasks.
+%an increase in model performance on the contrastive learning task, measured as the quality of the object recognition task, which is usually the case for more advanced losses does not necessarily lead to the performance increase on downstream tasks.
 
-We also compared popular negative sampling strategies (distance-weighted sampling~\citep{Manmatha2017SamplingMI}, and hard-negative mining~\citep{Schroff2015FaceNetAU}) with random negative sampling strategy. The results are shown in the Appendix~\ref{app-sec-design}, Table \ref{tab-neg-sampl}. We found that hard negative mining leads to significant increase in quality on downstream tasks in comparison to random negative sampling.
+We also compared popular negative sampling strategies (distance-weighted sampling~\citep{Manmatha2017SamplingMI}, and hard-negative mining~\citep{Schroff2015FaceNetAU}) with random negative sampling strategy. The results are shown in the Appendix~\ref{app-sec-design}, Table \ref{tab-neg-sampl}. We found that hard negative mining leads to a significant increase in quality on downstream tasks in comparison to random negative sampling.
 
 \begin{figure}
   \centering
@@ -315,10 +315,10 @@ We also compared popular negative sampling strategies (distance-weighted samplin
   \label{fig-semi-main}
 \end{figure}
 
-\textbf{Comparison with baselines.} We compared CoLES with baselines described in Section~\ref{sec-baselines} in two scenarios. First, we compared embeddings produced by CoLES encoder with other types of embeddings and with manually created aggregates by using them as input features of a downstream task model. The downstream task model is trained by LightGBM~\citep{Ke2017LightGBMAH}  independently from the sequence encoder. As Table~\ref{tab-downstream-res} demonstrates, our method generates sequence embeddings of sequential data that achieve strong performance results in comparison to the case of manually crafted features when used on the downstream tasks.
+\textbf{Comparison with baselines.} We compared CoLES with baselines described in Section~\ref{sec-baselines} in two scenarios. First, we compared embeddings produced by the CoLES encoder with other types of embeddings and with manually created aggregates by using them as input features of a downstream task model. The downstream task model is trained by LightGBM~\citep{Ke2017LightGBMAH}  independently from the sequence encoder. As Table~\ref{tab-downstream-res} demonstrates, our method generates sequence embeddings of sequential data that achieve strong performance results in comparison to the case of manually crafted features when used on the downstream tasks.
 In particular, Table~\ref{tab-downstream-res} shows that even unsupervised CoLES embeddings perform on par and sometimes even better than hand-crafted features. Also note, that CoLES embeddings outperform embeddings produced by the other self-supervised baselines on each dataset.
 
-In the second scenario, we fine-tune pre-trained models for specific downstream tasks. The models are pre-trained using CoLES and other self-supervised learning approaches and then are additionally trained on the labelled data for the specific task in the same way as we trained a neural net for the supervised learning (see Section~\ref{sec-baselines}). A neural net without pre-training is also added to the comparison. As Table~\ref{tab-downstream-res} shows, fine-tuned representations obtained by our method achieve superior performance on all the considered datasets, outperforming all other methods by statistically significant margins.
+In the second scenario, we fine-tune pre-trained models for specific downstream tasks. The models are pre-trained using CoLES and other self-supervised learning approaches and then are additionally trained on the labeled data for the specific task in the same way as we trained a neural net for the supervised learning (see Section~\ref{sec-baselines}). A neural net without pre-training is also added to the comparison. As Table~\ref{tab-downstream-res} shows, fine-tuned representations obtained by our method achieve superior performance on all the considered datasets, outperforming all other methods by statistically significant margins.
 
 \begin{table}
 \centering
@@ -355,7 +355,7 @@ As in the case of the supervised setup, we compare the proposed method with Ligt
 The results of this comparison are presented in Figure \ref{fig-semi-main}.
 Note that the difference in performance between CoLES and supervised-only methods increases as we decrease the number of available labels. Also note that CoLES consistently outperforms CPC for different volumes of labeled data.
 
-\textbf{Business applications.} In addition to the described experiments on public datasets, we have performed extensive testing of our method on the private data in large European bank. We've observed a significant increase in model performance (+ 2-10\% AUROC) after addition of CoLES embeddings to the existing models in many downstream tasks, including credit scoring, marketing campaign targeting, product recommendations cold start, fraud detection and legal entities connections prediction.
+\textbf{Business applications.} In addition to the described experiments on public datasets, we have performed extensive testing of our method on the private data in a large European bank. We've observed a significant increase in model performance (+ 2-10\% AUROC) after the addition of CoLES embeddings to the existing models in many downstream tasks, including credit scoring, marketing campaign targeting, product recommendations cold start, fraud detection and legal entities connections prediction.
 
 
 \section{Conclusions} \label{sec-conclusions}
@@ -363,8 +363,8 @@ Note that the difference in performance between CoLES and supervised-only method
 In this paper, we present \emph{Contrastive Learning for Event Sequences (CoLES)}, a novel self-supervised method for building embeddings of discrete event sequences.
 In particular, the CoLES method can be effectively used for pre-training neural networks in semi-supervised settings. It can also be used to produce embeddings of complex event sequences that can be effectively used in various downstream tasks.
 
-We also empirically demonstrate that our approach achieves strong performance results on several downstream tasks and consistently outperforms both classical machine learning baselines on hand-crafted features, as well as other  previously introduced  self--supervised and semi--supervised learning baselines adapted to the event sequence domain.
-In the semi-supervised setting, where the number of labelled data is limited, our method demonstrates even stronger results: the lesser is the labelled data the larger is performance margin between CoLES and supervised-only methods.
+We also empirically demonstrate that our approach achieves strong performance results on several downstream tasks and consistently outperforms both classical machine learning baselines on hand-crafted features, as well as other  previously introduced  self-supervised and semi-supervised learning baselines adapted to the event sequence domain.
+In the semi-supervised setting, where the number of labeled data is limited, our method demonstrates even stronger results: the lesser is the labeled data the larger is performance margin between CoLES and supervised-only methods.
 % The proposed method of generating embeddings is convenient for production usage since the pre-calculated embeddings can be easily used for different downstream tasks without performing complex and time-consuming computations on the raw event data.
 % For some encoder architectures, it is even possible to incrementally update the already calculated embeddings when new data arrives, as is shown in Section \ref{app-sec-perf-opt}.
 
@@ -377,7 +377,7 @@ The method is especially adapted for event sequence data which is extensively us
 
 % Furthermore, our method has strong fairness mechanisms built into it since it focuses on the analysis of the granular event sequences and, therefore, does not have to deal with the problem of biased decisions and predictions stemming from poorly computed aggregate data leading to various types of social biases.
 
-% Another advantage of using event sequence based embeddings, instead of the raw explicit event data, is that it is exceptionally difficult to restore the exact input sequence from its embeddings due to the fact, that lots of information is dropped during the transformation to embeddings. Therefore, the usage of embeddings leads to better privacy and data security for the end users than when working directly with the raw event data, and all this is achieved without sacrificing valuable information for downstream tasks.
+% Another advantage of using event sequence based embeddings, instead of the raw explicit event data, is that it is exceptionally difficult to restore the exact input sequence from its embeddings due to the fact, that lots of information is dropped during the transformation to embeddings. Therefore, the usage of embeddings leads to better privacy and data security for the end-users than when working directly with the raw event data, and all this is achieved without sacrificing valuable information for downstream tasks.
 
 
 
@@ -388,9 +388,9 @@ The method is especially adapted for event sequence data which is extensively us
 
 \section{Batch generation} \label{app-sec-bg}
 
-We consider several empirical strategies for sub-sequence generation to compare with the random slices algorithm described in section "Sampling of surrogate sequences" of the main paper.
-The simplest strategy is the random sampling without replacement.
-One more strategy is to produce sub-sequences by random splitting of the initial sequence to several connected segments without intersection between them. To generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}.
+We consider several empirical strategies for the sub-sequence generation to compare with the random slices algorithm described in section "Sampling of surrogate sequences" of the main paper.
+The simplest strategy is random sampling without replacement.
+One more strategy is to produce sub-sequences by the random splitting of the initial sequence to several connected segments without an intersection between them. To generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -420,7 +420,7 @@ To compute the dot product between all pairs in a batch we just need to multiply
 
 \section{Proof of Theorem 1} \label{app-sec-proof}
 
-In this section, we provide a proof of Theorem 1 (Section~\ref{sec-theory}) that justifies Random Slices sub-sequence generation strategy proposed in the paper.
+In this section, we provide proof of Theorem 1 (Section~\ref{sec-theory}) that justifies the Random Slices sub-sequence generation strategy proposed in the paper.
 
 %First, we give the statement of Theorem~1 for convenience.
 
@@ -477,7 +477,7 @@ The latter inequality in these calculations follows from the fact that $\left (\
 We designed the method specially for the user behavior sequences~\citep{Ni2018PerceiveYU}. These sequences consist of discrete events per person in continuous time, for example,  behavior on websites, credit card transactions, etc. 
 
 Considering credit card transactions, each transaction has a set of attributes, either categorical or numerical including the timestamp of the transaction. An example of the sequence of three transactions with their attributes is presented in Table \ref{tab-tr-data}.
-Merchant type field represents the category of a merchant, such as "airline", "hotel", "restaurant", etc.
+The merchant type field represents the category of a merchant, such as "airline", "hotel", "restaurant", etc.
 
 \begin{table}
 \centering
@@ -494,7 +494,7 @@ Jun 22 & 09:30 & 40 & USD & US & Household Appliance \\
 \label{tab-tr-data}
 \end{table}
 
-Another example of user behavior data is click-stream: the log of internet pages  visits. The example of a click-stream log of a single user is presented in Table \ref{tab-cs-data}.
+Another example of user behavior data is click-stream: the log of internet page visits. The example of a click-stream log of a single user is presented in Table \ref{tab-cs-data}.
 
 \begin{table}
 \centering
@@ -516,17 +516,17 @@ In our research we chose several publicly available datasets from data science c
 \begin{enumerate}
     \item \textbf{Age group prediction competition}\footnote{https://onti.ai-academy.ru/competition} - the task is to predict the age group of a person. The group ratio is balanced in the dataset. The dataset consists of 44M anonymized transactions representing 50k persons with a target labeled for only 30k of them (27M out of 44M transactions), for the other 20k persons (17M out of 44M transactions) label is unknown. Each transaction includes date, type (for example, grocery store, clothes, gas station, children's goods, etc.) and amount. We use all available 44M transactions for contrastive learning, excluding 10\% - for the test part of the dataset, and  5\% for the contrastive learning validation.
         
-    % \item \textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/} - the task is a classification problem of predicting a gender. The dataset consists of 6,8M anonymized card transactions representing 15k clients, where only 8,4k of them are labeled. Each transaction is characterized by date, type (for ex. "ATM cash deposit"), amount and Merchant Category Code (MCC).
+    % \item \textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/} - the task is a classification problem of predicting a gender. The dataset consists of 6,8M anonymized card transactions representing 15k clients, where the only 8,4k of them are labeled. Each transaction is characterized by date, type (for ex. "ATM cash deposit"), amount and Merchant Category Code (MCC).
     
     \item \textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M anonymized card transactions representing 10K clients was used to predict a churn probability. 5k clients have labels (0.49M out of 1M transactions), 5.2k clients haven't labels (0.52M out of 1M transactions). Target is binary, almost balanced with proportions 0.55 and 0.45. Transactions of the same type and month are grouped and represented as a single pseudo-transaction, which amount is the sum of grouped transactions. Each transaction is characterized by date, type, amount and Merchant Category Code.
     
-    \item \textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019} - the task is to predict the in-game assessments results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays (0.9M out of 12M gameplay events) are labelled, the remaning 312k gameplays (11.6M out of 12M gameplay events) are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
+    \item \textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019} - the task is to predict the results of the in-game assessment based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays (0.9M out of 12M gameplay events) are labeled, the remaining 312k gameplays (11.6M out of 12M gameplay events) are not labeled. Each gameplay event is characterized by timestamp, event code, the incremental counter of events within a game session, time since the start of the game session, etc.
     
     \item \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling} - the task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. The dataset consists of 45,8M retail purchases representing 400k clients. Only labeled data is used. Each purchase is characterized by time, product level, segment, amount, value, points received.
 
 \end{enumerate}
 
-To check that sequence lengths of the considered datasets follow the power-low distribution we measured their distribution of lengths. As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to power-law distribution for every considered dataset.
+To check that sequence lengths of the considered datasets follow the power-low distribution we measured their distribution of lengths. As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to the power-law distribution for every considered dataset.
 
 \begin{figure}
   \centering
@@ -535,7 +535,7 @@ To check that sequence lengths of the considered datasets follow the power-low d
   \label{fig-seq-len}
 \end{figure}
 
-To check that considered datasets follow our repeatability and periodicity assumption made in Section~\ref{sec-pos-pairs} and used for theoretical analysis in Section~\ref{sec-theory} we performed the following experiments. We measure the the KL-divergence two kinds of samples: (1) between random sub-samples of the same sequence, generated using modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The resutls are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
+To check that considered datasets follow our repeatability and periodicity assumption made in Section~\ref{sec-pos-pairs} and used for theoretical analysis in Section~\ref{sec-theory} we performed the following experiments. We measure the KL-divergence two kinds of samples: (1) between random sub-samples of the same sequence, generated using a modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The results are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
 Also note that additional plot (e) is provided as an example for data without any repeatable structure.
 
 \begin{figure}
@@ -566,7 +566,7 @@ Also note that additional plot (e) is provided as an example for data without an
 
 \section{Experiment setup} \label{app-sec-exp-setup}
 
-For all methods, random search on 5-fold cross-validation over the train set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance on train set are then chosen. The final set of hyper-parameters used for CoLES is shown in Table \ref{tab-hyper}. The number of sub-sequences generated for each sequence was always 5 for each dataset.
+For all methods, a random search on 5-fold cross-validation over the train set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance on the train set are then chosen. The final set of hyper-parameters used for CoLES is shown in Table \ref{tab-hyper}. The number of sub-sequences generated for each sequence was always 5 for each dataset.
 
 \begin{table}
 \centering
@@ -588,8 +588,8 @@ For all methods, random search on 5-fold cross-validation over the train set is 
 \subsection{Hand-crafted features} \label{app-sec-hand}
 
 Here we describe the details of producing hand-crafted features. All attributes of each transaction are either numerical (e. g. amount) or categorical (e.g. merchant type (MCC code), transaction type, etc.). 
-For numerical type of attribute we apply aggregation functions, such as 'sum', 'mean', 'std', 'min', 'max', over all transactions per user. For example, if we apply 'sum' for the numerical field 'amount' we obtain a feature 'sum of all transaction amounts per user'. 
-For categorical type of attribute we apply aggregation functions in a slightly different way. For each unique value of categorical attribute we apply aggregation functions, such as 'count', 'mean', 'std' over all transactions per user' numerical attribute. For example, if we apply 'mean' for the numerical attribute 'amount' grouped by categorical attribute 'mcc code' we obtain a feature 'mean amount of all transactions for each mcc code per user'. 
+For the numerical type of attribute we apply aggregation functions, such as 'sum', 'mean', 'std', 'min', 'max', over all transactions per user. For example, if we apply 'sum' for the numerical field 'amount' we obtain a feature 'sum of all transaction amounts per user'. 
+For the categorical type of attribute we apply aggregation functions in a slightly different way. For each unique value of categorical attribute we apply aggregation functions, such as 'count', 'mean', 'std' over all transactions per user' numerical attribute. For example, if we apply 'mean' for the numerical attribute 'amount' grouped by categorical attribute 'MCC code' we obtain a feature 'mean amount of all transactions for each MCC code per user'. 
 For example, for age prediction task we have one categorical attribute (small group) with 200 unique values, combining it with amount we can produce $200 * 3$ features ('group0 x amount x count',  'group1 x amount x count', ..., 'group199 x amount x count', 'group0 x amount x mean', ...). In total we use approx 605 features for this task. % For gender prediction task we have two categorical features: 'MCC code' with approx 200 unique values and 'tr type' with approx 100 unique values. So in total we use $200 * 3 + 100 * 3 + 5 = 905$ features.
 Note, that hand-crafted features contain information about user spending profile but omit information about transactions temporal order.
 
@@ -659,7 +659,7 @@ As shown in Table \ref{tab-enc-type}, different choices of encoder architectures
 
 \subsection{Embedding size}
 
-Figure \ref{fig-emb-dim} shows that the performance quality on the downstream task increases with  dimensionality of an embedding. After the best quality is achieved, further increase in dimensionality of an embedding dramatically reduces quality.
+Figure \ref{fig-emb-dim} shows that the performance quality on the downstream task increases with the dimensionality of an embedding. After the best quality is achieved, a further increase in the dimensionality of an embedding dramatically reduces quality.
 These results can be interpreted as the bias-variance trade-off. When the embedding dimensionality is too small, too much information can be discarded (high bias). On the other hand, when embedding dimensionality is too large, too much noise is added (high variance).
 Note, that increasing the embedding size will also linearly increase the training time and the volume of consumed memory on the GPU.
 
@@ -717,16 +717,16 @@ To evaluate our method in case of the restricted amount of labeled data, we use 
 
 \subsection{Embedding visualization} \label{app-sec-vis}
 
-In order to visualize CoLES embeddings in 2-dimensional space, we applied tSNE transformation~\citep{Maaten2008VisualizingDU} on them. tSNE transforms high-dimensional space to low-dimensional based on local relationships between points, so neighbour vectors in high-dimensional embedding space are pushed to be close in 2-dimensional space. We colorized 2-dimensional vectors using the target values of the datasets.
+In order to visualize CoLES embeddings in 2-dimensional space, we applied tSNE transformation~\citep{Maaten2008VisualizingDU} on them. tSNE transforms high-dimensional space to low-dimensional based on local relationships between points, so neighbor vectors in high-dimensional embedding space are pushed to be close in 2-dimensional space. We colorized 2-dimensional vectors using the target values of the datasets.
 
-Note, that embeddings was learned in a fully self-supervised way from raw user transactions without any target information. Sequence of transactions represent user' behavior, thus the CoLES model captures behavioral patterns and outputs embeddings of users with similar patterns nearby.
-As shown below, local clusters in embedding space correspond to distribution of user's attributes either age or churn fact.
+Note, that embeddings was learned in a fully self-supervised way from raw user transactions without any target information. The sequence of transactions represent user' behavior, thus the CoLES model captures behavioral patterns and outputs embeddings of users with similar patterns nearby.
+As shown below, local clusters in embedding space correspond to the distribution of user's attributes either age or churn fact.
 
-tSNE vectors from the age prediction dataset are presented in the Figure \ref{fig-tsne-age2}. We can observe 4 clusters: clusters for group '1' and '2' are on the opposite side of the cloud, clusters for groups '2' and '3' are in the middle.
+tSNE vectors from the age prediction dataset are presented in Figure \ref{fig-tsne-age2}. We can observe 4 clusters: clusters for group '1' and '2' are on the opposite side of the cloud, clusters for groups '2' and '3' are in the middle.
 
 Taking into account that age is an ordinal attribute, we can make an assumption about the ordering of age groups: $age(1) < age(3) < age(0) < age(2)$ or vice versa. ($age(bin)$ returns age of user for specific group).
 
-tSNE points from the churn prediction dataset are presented in the Figure \ref{fig-tsne-churn}. There are areas where one type of label dominates over the other.
+tSNE points from the churn prediction dataset are presented in Figure \ref{fig-tsne-churn}. There are areas where one type of label dominates over the other.
 
 \begin{figure}
   \centering
