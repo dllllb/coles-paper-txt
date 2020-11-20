@@ -131,7 +131,7 @@ in the two ways: (1) $c_e$ can be used as a feature vector for a task--specific 
 
 While we have no access to the latent processes $\{X_e(t)\}$, we need to use augmentation. Most augmentation techniques proposed earlier for continuous domains (such as image jitter, color jitter or random gray scale in computer vision, see \cite{Falcon2020AFF}) are not applicable to discrete events. A possible approach for augmentation is generating
 {\it sub-sequences} of the same event sequence $\{x_e(t)\}$. The idea proposed below resembles the bootstrap method~\citep{Efron1994Bootstrap}, which enables to generate several bootstrap samples using only one sample of independent datapoints of a latent distribution. However, our setting is different, since we have no independent observations, so we should rely on different data assumptions. 
-The key property of event sequences that represent life activity is periodicity and repeatability of its events. This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
+The key property of event sequences that represent life activity is periodicity and repeatability of its events (see Figure~\ref{fig-subseq-kl} in the Appendix~\ref{app-sec-datasets} for the empyrical observations of this properties for the considered datasets). This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
 
 
 \begin{figure}[htbp]
@@ -172,9 +172,9 @@ Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\
 These assumptions correspond to a scenario where some persons become clients of a service at a random moment and for some random time span and their behaviour obey some periodicity.    %First assumption is $\ldots$ 
 \begin{thm}\label{thm:distribution}
 If sequences $\{x_e(t)\}$ in the dataset are generated from latent processes $\{\widehat{X}_e(t)\}$ as described above with a lower bound $m$ for the length of a sequence $\{x_e(t)\}$, then sub-sequences obtained by Algorithm~\ref{alg-slce-ss} from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the length $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
-$$
-\left (\frac{m-1}{m}\right )^{-\alpha} p(T_e=k)\leq p(T'_e=k) \leq \left(\frac{k}{k-1/2}\right )^{-\alpha} p(T_e=k)  \quad \mbox{for any } k\in [m,\infty].
-$$
+\begin{equation}\label{probability_ratio}
+    \left (\frac{m-1}{m}\right )^{-\alpha} p(T_e=k)\leq p(T'_e=k) \leq \left(\frac{k}{k-1/2}\right )^{-\alpha} p(T_e=k)  \quad \mbox{for any } k\in [m,\infty].
+\end{equation}
 \end{thm}
 This theorem means that a sub-sequence obtained by Algorithm~\ref{alg-slce-ss} is a representative sample of entity~$e$ and follows its latent distribution $P_e$. Combining this result with generalization guarantees proved for setting with explicitly observed positive pairs~(\cite{Saunshi2019ICML}), we obtain theoretical background for our implicit self-supervised setting.   
 %Further in this paper, we empirically examine whether pairs of such sub-sequences are useful for contrastive learning-based self-supervision.
@@ -233,7 +233,7 @@ We compare our method with existing baselines on several publicly available data
 
 \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
 
-As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-datasets}), these datasets satisfy the power law assumption for the sequence length distribution of Theorem~\ref{thm:distribution}.
+As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-datasets}), these datasets satisfy the power law assumption for the sequence length distribution of Theorem~\ref{thm:distribution}. Also, as shown in Figure~\ref{fig-subseq-kl} (Appendix~\ref{app-sec-datasets}) the datasets satisfy the periodicity and repeatability assumption.
 
 %\textbf{Experimental setup.}
 
@@ -456,12 +456,14 @@ where $C$ is the normalization constant. To estimate the sum of the series, noti
 where the former inequality follows from the fact that $\int_{k-1/2}^{k+1/2} x^{\alpha-1}> k^{\alpha-1}$ as long as function $f(x)=x^{\alpha-1}$ is convex. After integration, we rewrite Equation~\ref{int_inequal} as follows:
 \begin{equation}\label{inequal}
 \frac{-1}{\alpha} \left ( k_0-\frac{1}{2}\right )^{\alpha} > \sum_{k=k_0}^{\infty} k^{\alpha-1} > \frac{-1}{\alpha} k_0^{\alpha}. \end{equation}
-Using these inequalities, we obtain the upper bound for $\P(T'_e=k)/\P(T_e=k)$ in the following way:
+Using these inequalities, we obtain the upper bound for $\P(T'_e=k)%/\P(T_e=k)
+$ in the following way:
 \begin{multline*}
 \P(T'_e=k_0) = \sum_{k=k_0}^{\infty} k^{\alpha-1} / \sum_{l=m}^\infty \sum_{k=l}^{\infty} k^{\alpha-1} < \frac{-1}{\alpha} \left ( k_0-\frac{1}{2}\right )^{\alpha} / \sum_{l=m}^\infty \frac{-1}{\alpha} l^{\alpha} = \\
 =\left (\frac{k_0}{k_0-1/2}\right )^{-\alpha} k_0^\alpha/\sum_{l=m}^\infty l^{\alpha} = \left (\frac{k_0}{k_0-1/2}\right )^{-\alpha} \P(T_e=k_0).
 \end{multline*}
-At last, the lower bound for $\P(T'_e=k)/\P(T_e=k)$ can be obtained using Equation~\ref{inequal} as follows:
+At last, the lower bound for $\P(T'_e=k)%/\P(T_e=k)
+$ can be obtained using Equation~\ref{inequal} as follows:
 \begin{multline*}
 \P(T'_e=k_0) = \sum_{k=k_0}^{\infty} k^{\alpha-1} / \sum_{l=m}^\infty \sum_{k=l}^{\infty} k^{\alpha-1} > k_0^{\alpha} / \sum_{l=m}^\infty  \left (l-\frac{1}{2}\right )^{\alpha} > \\
 > \left (\frac{m-1/2}{m}\right )^{-\alpha} k_0^\alpha/\sum_{l=m}^\infty l^{\alpha} = \left (\frac{m-1/2}{m}\right )^{-\alpha} \P(T_e=k_0).
@@ -524,7 +526,7 @@ In our research we chose several publicly available datasets from data science c
 
 \end{enumerate}
 
-As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to power-law distribution for every considered dataset.
+To check that sequence lengths of the considered datasets follow the power-low distribution we measured their distribution of lengths. As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to power-law distribution for every considered dataset.
 
 \begin{figure}
   \centering
@@ -533,7 +535,7 @@ As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is clo
   \label{fig-seq-len}
 \end{figure}
 
-The plots in Figure~\ref{fig-subseq-kl} demonstrate that the KL-divergence between random sub-samples generated using Algorithm 1 of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. It is reasonable to assume that event sequence have repeatable structure, same types of events repeat throughout the whole sequence.
+To check that considered datasets follow our repeatability and periodicity assumption made in Section~\ref{sec-pos-pairs} and used for theoretical analysis in Section~\ref{sec-theory} we performed the following experiments. We measure the the KL-divergence two kinds of samples: (1) between random sub-samples of the same sequence, generated using modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The resutls are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
 Also note that additional plot (e) is provided as an example for data without any repeatable structure.
 
 \begin{figure}
@@ -558,7 +560,7 @@ Also note that additional plot (e) is provided as an example for data without an
     \caption{Texts}
     \includegraphics[width=\linewidth]{figures/kl_dis_text.pdf}
   \end{subfigure}
-  \caption{Periodicity and repeatbility of data. KL-divergence between event types of two random subsequuences of events is used as measure of similarity between event distributions.}
+  \caption{Periodicity and repeatbility of the data. KL-divergence between event types of two random sub-sequences from the same sequence is compared with KL-divergence between sub-sequences of different sequences.}
   \label{fig-subseq-kl}
 \end{figure}
 
