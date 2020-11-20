@@ -25,6 +25,7 @@
 
 \newcommand{\nt}[1]{{\bf [#1]}}
 \newcommand{\R}{\mathbb{R}}
+\renewcommand{\P}{\mathbb{P}}
 
 
 \title{CoLES: Contrastive Learning for Event Sequences with Self-Supervision}
@@ -75,13 +76,13 @@ However, there has been very little research on self-supervised learning in the 
 %, e.g., transactions, search queries, purchase history, phone calls and messages. 
 The analysis of these sequences constitutes an  important sub-field of machine learning~\citep{Laxman2008StreamPU, Wiese2009CreditCT, Zhang2017CreditRA, Bigon2019PredictionIV}.
 
+NLP, audio and computer vision domains are similar in the sense that the data of this type is "continuous": a short term in NLP can be accurately reconstructed from its context (like a pixel from its neighbouring pixels). This fact underlies popular NLP approaches for self-supervision such as BERT’s Cloze task~\citep{Devlin2019BERTPO} and approaches for self-supervision in audio and computer vision, like CPC~\citep{Oord2018RepresentationLW}. In contrast, for many types of event sequence data, a single token cannot be determined using its nearby tokens, because the mutual information between a token and its context is small. For this reason, most state-of-the-art self-supervised methods are not applicable to event sequence data.
 
 In this paper, we propose \emph{COntrastive Learning for Event Sequences (CoLES)} method that learns low-dimensional representations of discrete event sequences. It is based on a novel theoretically grounded data augmentation strategy, which adapts the ideas of contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB} to the discrete event sequences domain in a self-supervised setting.
 %Most of existing contrastive learning methods have been successfully applied in core machine learning domains. 
-The aim of contrastive learning is to represent semantically similar objects (\textit{positive pairs} of images, video, audio, etc.) closer to each other, while dissimilar ones (\textit{negative pairs}) further away. Positive pairs are obtained for training either {\it explicitly}, e.g., in a manual labeling process or {\it implicitly} using different data augmentation strategies (\cite{Falcon2020AFF}). We treat explicit cases as a {\it supervised} approach and implicit cases as a {\it self-supervised} one. In most applications, where each person is represented by one sequence of events, it is not reasonable to obtain manual labeling, thus only self-supervised approaches are applicable. Our CoLES method is self-supervised and based on the observation that event sequences usually possess periodicity and repeatability of its events. We propose and theoretically justify a new augmentation algorithm, which generates sub-sequences of an observed event sequence and uses them as different high-dimensional 
+The aim of contrastive learning is to represent semantically similar objects (\textit{positive pairs} of images, video, audio, etc.) closer to each other, while dissimilar ones (\textit{negative pairs}) further away. Positive pairs are obtained for training either {\it explicitly}, e.g., in a manual labeling process or {\it implicitly} using different data augmentation strategies (\cite{Falcon2020AFF}). We treat explicit cases as a {\it supervised} approach and implicit cases as a {\it self-supervised} one. In most applications, where each person is represented by one sequence of events, there are no explicit positive pairs, and thus only self-supervised approaches are applicable. Our CoLES method is self-supervised and based on the observation that event sequences usually possess periodicity and repeatability of their events. We propose and theoretically justify a new augmentation algorithm, which generates sub-sequences of an observed event sequence and uses them as different high-dimensional 
 views of the same (sequence) object for contrastive learning.
-% Глеб: здесь было окончание абзаца, которое потеряло актулаьность в связи с тем, что augmentation в CL - это не наше изобретение. Я его убрал. 
- %CoLES model trained in a self-supervised manner can be used in two ways.
+
 Representations produced by the CoLES model can be used directly as a fixed vectors of features in some supervised downstream task (e. g. classification task) similarly to~\citep{Mikolov2013EfficientEO, Song2017LearningUE, Zhai2019LearningAU}. Alternatively, the trained CoLES model can be fine-tuned~\citep{Devlin2019BERTPO} for the specific downstream task.
 We applied CoLES to several user behavior sequence datasets with different downstream classification tasks. When used directly as feature vectors, CoLES representations achieve strong performance comparable to the hand-crafted features produced by data scientists.
 We demonstrate that fine-tuned CoLES representations consistently outperform methods based on other representations by a significant margin. %Moreover, we show superiority of CoLES embeddings over the supervised approach applied to the partially labeled raw data due to insufficient amount of the target to learn a sufficiently complex model from scratch.
@@ -122,8 +123,9 @@ Independently of our study, several papers appeared in the past few months on se
 While the method proposed in this paper could be studied in different domains, in this paper we focus on discrete sequences of events. Assume there are some entities $e$, and the life activity of each entity~$e$ is observed as a sequence of events $x_e:=\{x_e(t)\}^{T_e}_{t=1}$. Entities could be people or organizations or some other abstractions. Events $x_e(t)$ may have any nature and structure (e.g., transactions of a client, click logs of a user), and their components may contain numerical, categorical, and textual fields (see datasets description in Section~\ref{sec-exp}). 
 % $\{x_e(t)\}^{T_e}_{t=1}$.
 
-According to theoretical framework of contrastive learning proposed in~\cite{Saunshi2019ICML}, each entity $e$ is a latent class, which is associated with a distribution $P_e$ over its possible samples (event sequences). However, unlike the problem setting of  \cite{Saunshi2019ICML}, we have no positive pairs, i.e. pairs of event sequences representing the same entity $e$. Instead, we have only one sequence $x_e$ per entity~$e$. Formally, each entity $e$ is associated with a latent stochastic process $\{X_e(t)\}_{t=1}^{T_e}$, and we observe {\it only one} realisation $\{x_e(t)\}_{t=1}^{T_e}$ generated by the process $\{X_e(t)\}$. Our goal is to learn an \textit{encoder} $M$ that maps event sequences into a feature space~$\R^d$ in such a way that the obtained \textit{embedding} $c_e=M(\{x_e\})\in \R^d$ of sequence $\{x_e(t)\}^{T_e}_{t=1}$ encodes essential properties of~$e$ and disregards any randomness and noise contained in the sequence. That is, embeddings $M(\{x_1\})$ and $M(\{x_2\})$ should be close to each other, if $x_1$ and $x_2$ are sequences generated by the same process $\{X_e(t)\}$, and they should be further away, when generated by distinct processes. The quality of representations can be examined by downstream tasks related to the properties of entity $e$. %(see Section~\ref{sec-res}). 
-%as follows: (1) $c_e$ can be used as a feature vector for a task--specific model, and (2) encoder $M$ can also be (jointly) fine-tuned~\citep{Yosinski2014HowTA}.
+According to theoretical framework of contrastive learning proposed in~\cite{Saunshi2019ICML}, each entity $e$ is a latent class, which is associated with a distribution $P_e$ over its possible samples (event sequences). However, unlike the problem setting of  \cite{Saunshi2019ICML}, we have no positive pairs, i.e. pairs of event sequences representing the same entity $e$. Instead, we have only one sequence $x_e$ per entity~$e$. Formally, each entity $e$ is associated with a latent stochastic process $\{X_e(t)\}_{t=1}^{T_e}$, and we observe {\it only one} realisation $\{x_e(t)\}_{t=1}^{T_e}$ generated by the process $\{X_e(t)\}$. Our goal is to learn an \textit{encoder} $M$ that maps event sequences into a feature space~$\R^d$ in such a way that the obtained \textit{embedding} $c_e=M(\{x_e\})\in \R^d$ of sequence $\{x_e(t)\}^{T_e}_{t=1}$ encodes essential properties of~$e$ and disregards any randomness and noise contained in the sequence. That is, embeddings $M(\{x_1\})$ and $M(\{x_2\})$ should be close to each other, if $x_1$ and $x_2$ are sequences generated by the same process $\{X_e(t)\}$, and they should be further away, when generated by distinct processes. The quality of representations can be examined by downstream tasks %related to the properties of entity $e$. %(see Section~\ref{sec-res}). 
+%as follows
+in the two ways: (1) $c_e$ can be used as a feature vector for a task--specific model, and (2) encoder $M$ can also be (jointly) fine-tuned~\citep{Yosinski2014HowTA}.
 
 \subsection{Sampling of surrogate sequences as an augmentation procedure} \label{sec-pos-pairs}
 
@@ -169,7 +171,10 @@ Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\
 \end{enumerate}
 These assumptions correspond to a scenario where some persons become clients of a service at a random moment and for some random time span and their behaviour obey some periodicity.    %First assumption is $\ldots$ 
 \begin{thm}\label{thm:distribution}
-If sequences $\{x_e(t)\}$ in the dataset are generated from latent processes $\{\widehat{X}_e(t)\}$ as described above, then sub-sequences obtained by Algorithm~\ref{alg-slce-ss} from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the horizon $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy $p(T'_e=k)/p(T_e=k)\in [(\frac{m-1}{m})^{-\alpha},(\frac{k}{k-1/2})^{-\alpha}]$.
+If sequences $\{x_e(t)\}$ in the dataset are generated from latent processes $\{\widehat{X}_e(t)\}$ as described above with a lower bound $m$ for the length of a sequence $\{x_e(t)\}$, then sub-sequences obtained by Algorithm~\ref{alg-slce-ss} from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the length $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
+$$
+\left (\frac{m-1}{m}\right )^{-\alpha} p(T_e=k)\leq p(T'_e=k) \leq \left(\frac{k}{k-1/2}\right )^{-\alpha} p(T_e=k)  \quad \mbox{for any } k\in [m,\infty].
+$$
 \end{thm}
 This theorem means that a sub-sequence obtained by Algorithm~\ref{alg-slce-ss} is a representative sample of entity~$e$ and follows its latent distribution $P_e$. Combining this result with generalization guarantees proved for setting with explicitly observed positive pairs~(\cite{Saunshi2019ICML}), we obtain theoretical background for our implicit self-supervised setting.   
 %Further in this paper, we empirically examine whether pairs of such sub-sequences are useful for contrastive learning-based self-supervision.
@@ -196,7 +201,7 @@ One more strategy is to produce sub-sequences by random splitting of the initial
 $ \mathcal{L} =  (1-Y)\frac{1}{2}(D_W^i)^2 +Y*\frac{1}{2}\{max(0,m-D_W^i)\}^2 $, where $D_W^i$ is a distance function between embeddings in i-th labeled sample pair, $Y$ is a binary variable identifying that the pair is positive.
 As proposed in~\citep{Hadsell2006DimensionalityRB}, we use euclidean distance function: $D_W^i = D(A,B) = \sqrt{\sum_i(A_i - B_i)^2}$.
 
-\textbf{Pair distance calculation.} In order to select negative samples, we need to compute pairwise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them on a hyper-sphere of unit radius (see Appendix~\ref{app-sec-perf-opt}).
+\textbf{Pair distance calculation.} In order to select negative samples, we need to compute pairwise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them onto a hyper-sphere of unit radius (see Appendix~\ref{app-sec-perf-opt}).
 
 
 \textbf{Negative sampling} is a way to address the following challenge of the contrastive learning approach: using all pairs of samples can be inefficient: for example, some of the negative pairs are already distant enough, thus these pairs are not valuable for the training~\citep{SimoSerra2015DiscriminativeLO, Schroff2015FaceNetAU}. Hence, only a part of possible negative pairs in the batch are used during loss calculation. We compared most popular choices for negative sampling applied for CoLES, see Section~\ref{sec-res} for details.
@@ -224,7 +229,7 @@ We compare our method with existing baselines on several publicly available data
 
 \textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M anonymized card transactions representing 10K clients was used to predict a churn probability. Each transaction is characterized by date, type, amount and Merchant Category Code. 5k clients have labels, 5.2k clients haven't labels. Target is binary, almost balanced with proportions 0.55 and 0.45.
 
-\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}. The task is to predict the in-game assessment results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events representing 18k children. Gameplays of the nearly all (17.7k) children are labelled, the gameplays of the remaining 312k children are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
+\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}. The task is to predict the in-game assessment results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labelled, the remaining 312k gameplays are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
 
 \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
 
@@ -358,7 +363,7 @@ Note that the difference in performance between CoLES and supervised-only method
 In this paper, we present \emph{Contrastive Learning for Event Sequences (CoLES)}, a novel self-supervised method for building embeddings of discrete event sequences.
 In particular, the CoLES method can be effectively used for pre-training neural networks in semi-supervised settings. It can also be used to produce embeddings of complex event sequences that can be effectively used in various downstream tasks.
 
-We also empirically demonstrate that our approach achieves strong performance results on several downstream tasks and significantly outperforms both classical machine learning baselines on hand-crafted features, as well as other  previously introduced  self--supervised and semi--supervised learning baselines adapted to the event sequence domain.
+We also empirically demonstrate that our approach achieves strong performance results on several downstream tasks and consistently outperforms both classical machine learning baselines on hand-crafted features, as well as other  previously introduced  self--supervised and semi--supervised learning baselines adapted to the event sequence domain.
 In the semi-supervised setting, where the number of labelled data is limited, our method demonstrates even stronger results: the lesser is the labelled data the larger is performance margin between CoLES and supervised-only methods.
 % The proposed method of generating embeddings is convenient for production usage since the pre-calculated embeddings can be easily used for different downstream tasks without performing complex and time-consuming computations on the raw event data.
 % For some encoder architectures, it is even possible to incrementally update the already calculated embeddings when new data arrives, as is shown in Section \ref{app-sec-perf-opt}.
@@ -415,21 +420,23 @@ To compute the dot product between all pairs in a batch we just need to multiply
 
 \section{Proof of Theorem 1} \label{app-sec-proof}
 
-In this section, we provide the proof of Theorem 1 that justifies Random Slices sub-sequence generation strategy proposed in the paper. First, we give the statement of Theorem~1 for convenience.
+In this section, we provide a proof of Theorem 1 (Section~\ref{sec-theory}) that justifies Random Slices sub-sequence generation strategy proposed in the paper.
 
-Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$, which generates sequence of all events in the potentially infinite life of entity $e$. That is, we assume that $X_e(t)=\widehat{X}_e(t+s_e)$ for some random starting point $s_e\in \{0,1,\ldots\}$ and horizon $T_e$. Thus we observe, in our data, segment $[s_e+1,s_e+T_e]$ of the life of $e$. We also make the following Assumptions:
-\begin{enumerate}
-    \item Process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$ is cyclostationary (in the strict sense)~\citep{Gardner2006Cyclostationarity} with some period $\widehat{T}$.
-    \item Starting $s_e$ is independent, and the distribution of $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$.
-    \item Horizon $T_e$ is independent and follows a power--law distribution on $[m,\infty]$.
-\end{enumerate}
-\begin{thm}
-If sequences $\{x_e(t)\}$ in the dataset are samples of processes $\{X_e(t)\}$, then sub-sequences obtained by the Random Slices generation strategy from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the horizon $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
-\begin{equation}\label{probability_ratio}
-\P(T'_e=k)/\P(T_e=k)\in \left [\left (\frac{m-1}{m}\right )^{-\alpha},\left (\frac{k}{k-1/2}\right )^{-\alpha}\right ].    
-\end{equation}
+%First, we give the statement of Theorem~1 for convenience.
 
-\end{thm}
+%Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$, which generates sequence of all events in the potentially infinite life of entity $e$. That is, we assume that $X_e(t)=\widehat{X}_e(t+s_e)$ for some random starting point $s_e\in \{0,1,\ldots\}$ and horizon $T_e$. Thus we observe, in our data, segment $[s_e+1,s_e+T_e]$ of the life of $e$. We also make the following Assumptions:
+%\begin{enumerate}
+%    \item Process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$ is cyclostationary (in the strict sense)~\citep{Gardner2006Cyclostationarity} with some period $\widehat{T}$.
+%    \item Starting $s_e$ is independent, and the distribution of $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$.
+%    \item Horizon $T_e$ is independent and follows a power--law distribution on $[m,\infty]$.
+%\end{enumerate}
+%\begin{thm}
+%If sequences $\{x_e(t)\}$ in the dataset are samples of processes $\{X_e(t)\}$, then sub-sequences obtained by the Random Slices generation strategy from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the horizon $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
+%\begin{equation}\label{probability_ratio}
+%\P(T'_e=k)/\P(T_e=k)\in \left [\left (\frac{m-1}{m}\right %)^{-\alpha},\left (\frac{k}{k-1/2}\right )^{-\alpha}\right %].    
+%\end{equation}
+
+%\end{thm}
 
 \begin{proof}
 First, we state the following straightforward lemma:
@@ -511,7 +518,7 @@ In our research we chose several publicly available datasets from data science c
     
     \item \textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M anonymized card transactions representing 10K clients was used to predict a churn probability. 5k clients have labels (0.49M out of 1M transactions), 5.2k clients haven't labels (0.52M out of 1M transactions). Target is binary, almost balanced with proportions 0.55 and 0.45. Transactions of the same type and month are grouped and represented as a single pseudo-transaction, which amount is the sum of grouped transactions. Each transaction is characterized by date, type, amount and Merchant Category Code.
     
-    \item \textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019} - the task is to predict the in-game assessments results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. Gameplays of the nearly all (17.7k) children (0.9M out of 12M gameplay events) are labelled, the gameplays of the remaining 312k children (11.6M out of 12M gameplay events) are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
+    \item \textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019} - the task is to predict the in-game assessments results based on the history of children gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays (0.9M out of 12M gameplay events) are labelled, the remaning 312k gameplays (11.6M out of 12M gameplay events) are not labelled. Each gameplay event is characterized by timestamp, event code, incremental counter of events within a game session, time since the start of the game session, etc.
     
     \item \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling} - the task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. The dataset consists of 45,8M retail purchases representing 400k clients. Only labeled data is used. Each purchase is characterized by time, product level, segment, amount, value, points received.
 
@@ -524,6 +531,35 @@ As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is clo
   \caption{Event sequence length distribution}
   \includegraphics[width=\linewidth]{figures/all_scenario_events_per_client.pdf}
   \label{fig-seq-len}
+\end{figure}
+
+The plots in Figure~\ref{fig-subseq-kl} demonstrate that the KL-divergence between random sub-samples generated using Algorithm 1 of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. It is reasonable to assume that event sequence have repeatable structure, same types of events repeat throughout the whole sequence.
+Also note that additional plot (e) is provided as an example for data without any repeatable structure.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.5\linewidth}
+    \caption{Age group}
+    \includegraphics[width=\linewidth]{figures/kl_dis_age_group.pdf}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\linewidth}
+    \caption{Churn}
+    \includegraphics[width=\linewidth]{figures/kl_dis_churn.pdf}
+  \end{subfigure}
+  \begin{subfigure}{0.5\linewidth}
+    \caption{Assessment}
+    \includegraphics[width=\linewidth]{figures/kl_dis_assessment.pdf}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\linewidth}
+    \caption{Retail}
+    \includegraphics[width=\linewidth]{figures/kl_dis_retail.pdf}
+  \end{subfigure}
+  \begin{subfigure}{0.5\linewidth}
+    \caption{Texts}
+    \includegraphics[width=\linewidth]{figures/kl_dis_text.pdf}
+  \end{subfigure}
+  \caption{Periodicity and repeatbility of data. KL-divergence between event types of two random subsequuences of events is used as measure of similarity between event distributions.}
+  \label{fig-subseq-kl}
 \end{figure}
 
 \section{Experiment setup} \label{app-sec-exp-setup}
