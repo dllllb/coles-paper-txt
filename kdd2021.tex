@@ -462,9 +462,8 @@ The method is especially adapted for event sequence data which is extensively us
 % Another advantage of using event sequence based embeddings, instead of the raw explicit event data, is that it is exceptionally difficult to restore the exact input sequence from its embeddings due to the fact, that lots of information is dropped during the transformation to embeddings. Therefore, the usage of embeddings leads to better privacy and data security for the end-users than when working directly with the raw event data, and all this is achieved without sacrificing valuable information for downstream tasks.
 
 
-
-\bibliographystyle{humannat}
-\bibliography{iclr2021}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{kdd2021}
 
 \appendix
 
@@ -795,44 +794,6 @@ To evaluate our method in case of the restricted amount of labeled data, we use 
   \end{subfigure}
   \caption{Model quality for different dataset sizes} \small{The rightmost point corresponds to all labels and supervised setup.}
   \label{fig-semi}
-\end{figure}
-
-\subsection{Embedding visualization} \label{app-sec-vis}
-
-In order to visualize CoLES embeddings in 2-dimensional space, we applied tSNE transformation~\citep{Maaten2008VisualizingDU} on them. tSNE transforms high-dimensional space to low-dimensional based on local relationships between points, so neighbor vectors in high-dimensional embedding space are pushed to be close in 2-dimensional space. We colorized 2-dimensional vectors using the target values of the datasets.
-
-Note, that embeddings was learned in a fully self-supervised way from raw user transactions without any target information. The sequence of transactions represent user' behavior, thus the CoLES model captures behavioral patterns and outputs embeddings of users with similar patterns nearby.
-As shown below, local clusters in embedding space correspond to the distribution of user's attributes either age or churn fact.
-
-tSNE vectors from the age prediction dataset are presented in Figure \ref{fig-tsne-age2}. We can observe 4 clusters: clusters for group '1' and '2' are on the opposite side of the cloud, clusters for groups '2' and '3' are in the middle.
-
-Taking into account that age is an ordinal attribute, we can make an assumption about the ordering of age groups: $age(1) < age(3) < age(0) < age(2)$ or vice versa. ($age(bin)$ returns age of user for specific group).
-
-tSNE points from the churn prediction dataset are presented in Figure \ref{fig-tsne-churn}. There are areas where one type of label dominates over the other.
-
-\begin{figure}
-  \centering
-  \caption{2D tSNE mapping of CoLES embeddings colored by target labels}
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Age group}
-    \includegraphics[width=\textwidth]{figures/iclr-age-pred-tsne.pdf}
-    \label{fig-tsne-age2}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Churn}
-    \includegraphics[width=\textwidth]{figures/iclr-churn-tsne.pdf}
-    \label{fig-tsne-churn}
-  \end{subfigure}
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Assessment}
-    \includegraphics[width=\textwidth]{figures/iclr-bowl-tsne-accuracy_group.pdf}
-    \label{fig-tsne-bowl}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Retail}
-    \includegraphics[width=\textwidth]{figures/iclr-x5-tsne-age_bin.pdf}
-    \label{fig-tsne-x5}
-  \end{subfigure}
 \end{figure}
 
 \end{document}
