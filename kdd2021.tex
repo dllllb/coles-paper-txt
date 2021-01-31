@@ -456,11 +456,13 @@ In particular, the CoLES method can be effectively used for pre-training neural 
 
 We also empirically demonstrate that our approach achieves strong performance results on several downstream tasks and consistently outperforms both classical machine learning baselines on hand-crafted features, as well as other  previously introduced  self-supervised and semi-supervised learning baselines adapted to the event sequence domain.
 In the semi-supervised setting, where the number of labeled data is limited, our method demonstrates even stronger results: the lesser is the labeled data the larger is performance margin between CoLES and supervised-only methods.
-% The proposed method of generating embeddings is convenient for production usage since the pre-calculated embeddings can be easily used for different downstream tasks without performing complex and time-consuming computations on the raw event data.
-% For some encoder architectures, it is even possible to incrementally update the already calculated embeddings when new data arrives, as is shown in Section \ref{app-sec-perf-opt}.
+
+The proposed method of generating embeddings is convenient for production usage since the pre-calculated embeddings can be easily used for different downstream tasks without performing complex and time-consuming computations on the raw event data.
+For some encoder architectures, it is even possible to incrementally update the already calculated embeddings when new data arrives, as is shown in Section \ref{app-sec-perf-opt}.
 
 The method is especially adapted for event sequence data which is extensively used by the core businesses of many large companies, including financial institutions, internet companies, retail and telecom.
-%We also conducted a pilot study on a private event sequence data of a large European bank and CoLES embeddings achieved superior performance on downstream classification tasks which produced significant financial gains for the bank.
+
+We conducted a pilot study on a private event sequence data of a large European bank and CoLES embeddings achieved superior performance on downstream classification tasks which produced significant financial gains for the bank.
 
 % \section*{Broader Impact}
 
