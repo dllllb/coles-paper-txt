@@ -454,6 +454,47 @@ We performed extensive tests on in-house datasets for different ML tasks.
 
 We've observed a significant increase in model performance (+ 2-10\% AUROC) after the addition of CoLES embeddings to the existing models in many downstream tasks, including credit scoring, marketing campaign targeting, product recommendations cold start, fraud detection and legal entities connections prediction.
 
+
+\begin{table}
+\centering
+\caption{Organization transactions embeddings}
+\begin{tabular}{llll}
+  \toprule
+  & CoLES embeddings & Baseline & Baseline + CoLES embeddings \\
+  \midrule
+  Number of emploees in medium organization (SMAPE) &  & 409 & 365 \\
+  Number of emploees in small organization (SMAPE) &  & 237 & 213 \\
+  Mean salary in medium organization (SMAPE) &  & 278 & 260 \\
+  Mean salary in small organization (SMAPE) &  & 541 & 513 \\
+  Medical insurance lead generation (AUROC) & 0,85 & 0,71 & 0,85 \\
+  Credit Scoring lead generation (AUROC) & 788 & 749 & 786 \\
+  Credit Scoring for medium and small organizations (AUROC) & 0,71 & 0,73 & 0,77
+  \bottomrule
+\end{tabular}
+\small{Baseline includes both transactional and non-transactional features}
+\end{table}
+
+
+\begin{table}
+\centering
+\caption{Person transactions embeddings}
+\begin{tabular}{llll}
+  \toprule
+  & CoLES embeddings & Baseline & Baseline + CoLES embeddings \\
+  \midrule
+  Number of emploees in medium organization (SMAPE) &  & 409 & 365 \\
+  Number of emploees in small organization (SMAPE) &  & 237 & 213 \\
+  Mean salary in medium organization (SMAPE) &  & 278 & 260 \\
+  Mean salary in small organization (SMAPE) &  & 541 & 513 \\
+  Medical insurance lead generation (AUROC) & 0,85 & 0,71 & 0,85 \\
+  Credit Scoring lead generation (AUROC) & 788 & 749 & 786 \\
+  Credit Scoring for medium and small organizations (AUROC) & 0,71 & 0,73 & 0,77
+  \bottomrule
+\end{tabular}
+\small{Baseline includes both transactional and non-transactional features}
+\end{table}
+
+
 \section{Conclusions} \label{sec-conclusions}
 
 In this paper, we present \emph{Contrastive Learning for Event Sequences (CoLES)}, a novel self-supervised method for building embeddings of discrete event sequences.
