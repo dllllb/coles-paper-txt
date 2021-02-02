@@ -446,8 +446,13 @@ As in the case of the supervised setup, we compare the proposed method with Ligt
 The results of this comparison are presented in Figure \ref{fig-semi-main}.
 Note that the difference in performance between CoLES and supervised-only methods increases as we decrease the number of available labels. Also note that CoLES consistently outperforms CPC for different volumes of labeled data.
 
-\textbf{Business applications.} In addition to the described experiments on public datasets, we have performed extensive testing of our method on the private data in a large European bank. We've observed a significant increase in model performance (+ 2-10\% AUROC) after the addition of CoLES embeddings to the existing models in many downstream tasks, including credit scoring, marketing campaign targeting, product recommendations cold start, fraud detection and legal entities connections prediction.
+\subsection{In-house application of CoLES}
 
+In addition to the described experiments on public datasets, we are actively using self-supervised CoLES embenddings, in the ecosystem of a large European financial services company. We created two types of embeddings: (1) embeddings, based on legal entity transactions and (2) embeddings based on person's debet/credit card transactions.
+
+We performed extensive tests on in-house datasets for different ML tasks.
+
+We've observed a significant increase in model performance (+ 2-10\% AUROC) after the addition of CoLES embeddings to the existing models in many downstream tasks, including credit scoring, marketing campaign targeting, product recommendations cold start, fraud detection and legal entities connections prediction.
 
 \section{Conclusions} \label{sec-conclusions}
 
