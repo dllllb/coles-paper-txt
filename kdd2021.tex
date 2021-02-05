@@ -135,29 +135,28 @@ We deployed CoLES embeddings based on event sequence data at the large European 
 
 \section{Introduction} \label{sec-intro}
 
-Representation learning is a promising and rapidly growing deep learning approach used to represent discrete variable data as continuous fixed-length vectors (so called Embeddings). The idea of embeddings is to learn internal patterns of the input data based on a convenient synthetic task encouraging exploration without any additional information about "golden truth" output ~\citep{Peters2018DeepCW, Devlin2019BERTPO, Doersch2015UnsupervisedVR, Oord2018RepresentationLW}. Embeddings can be used in building ML models directly as features in a fast and more effective manner. Using embeddings in ML models does not require for the data scientists extensive feature engineering and deep domain knowledge to design features. 
+Most of the financial services companies work extensively with sequences of various types of transactions generated either by individual customers or businesses. Examples of these sequences of transactions are credit card transactions, savings and checking account transactions and investment transactions for individual customers, as well as debiting and crediting  activities for accounts receivables of business customers. 
+These sequences of transactions capture customer behavior of a certain type and represent valuable information for the financial services companies. 
+This information, however, cannot be shared across different divisions of the organization or across different sister companies of the ecosystem of a large holding company due to security, data volume, organizational, and regulatory reasons. 
 
-Large financial institutions produce extensive amount of discrete event sequences data, including user behavior sequences~\citep{Ni2018PerceiveYU}. User behavior sequence is attributed to a person or legal entity and captures regular and routine actions of a certain type, such as credit card transactions or transfers between legal entities. Using user behavior sequences embeddings as features in ML models does not require time-consuming feature engineering and thus is a major key to the growth of modern financial services companies. Also in large financial services companies when data is distributed across various divisions and subsidiaries of a company direct data sharing can be problematic due to security/privacy reasons and data volume reasons. In this case user behavior sequences embeddings provide a significantly better data sharing mechanisms within the ecosystem of a large organisation needed for building ML models than direct data sharing.
+One way to address this problem and share sequences of transactions across the entire organization is to represent them in the form of \emph{embeddings} that comprise continuous fixed-length vectors capturing the "essence" of transnational sequences through learning their internal patterns and compressing these (long) sequences into low-dimensional vector representations ~\citep{Mikolov2013EfficientEO, Peters2018DeepCW, Devlin2019BERTPO, Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
+Then sharing customers' transactional sequences in the form of embeddings provides a significantly better sharing arrangement within the organisation than doing it directly with the transactional data.
+Although these embeddings can be produced in many different ways, using deep learning to do it is a promising and rapidly growing approach in ML. 
+%used to represent discrete variable data as continuous fixed-length vectors (so called Embeddings). 
+%The idea of embeddings is to learn internal patterns of the input data based on a convenient synthetic task encouraging exploration without any additional information about "golden truth" output ~\citep{Peters2018DeepCW, Devlin2019BERTPO, Doersch2015UnsupervisedVR, Oord2018RepresentationLW}. 
+Furthermore, embeddings can be used in building ML models directly as features in an effective and quick manner, and using them in ML models does not require extensive feature engineering and deep domain knowledge to design features on the part of data scientists. 
 
+%Large financial institutions produce extensive amount of discrete event sequences data, including user behavior sequences~\citep{Ni2018PerceiveYU}. User behavior sequence is attributed to a person or legal entity and captures regular and routine actions of a certain type, such as credit card transactions or transfers between legal entities. Using user behavior sequences embeddings as features in ML models does not require time-consuming feature engineering and thus is a major key to the growth of modern financial services companies. Also in large financial services companies when data is distributed across various divisions and subsidiaries of a company direct data sharing can be problematic due to security/privacy reasons and data volume reasons. In this case user behavior sequences embeddings provide a significantly better data sharing mechanisms within the ecosystem of a large organisation needed for building ML models than direct data sharing.
 
-Most of the algorithms in the area of representation learning has been focused on the core machine learning domains, including NLP (e.g., ELMO~\citep{Peters2018DeepCW}, BERT~\citep{Devlin2019BERTPO}), speech (e.g., CPC~\citep{Oord2018RepresentationLW}) and computer vision~\citep{Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
-NLP, audio and computer vision domains are similar in the sense that the data of this type is "continuous": a short term in NLP can be accurately reconstructed from its context (like a pixel from its neighboring pixels). This fact underlies popular approaches for representation learning in NLP such as BERT’s Cloze task~\citep{Devlin2019BERTPO}, audio and computer vision, like CPC~\citep{Oord2018RepresentationLW}. In contrast, for many types of financial domain data such as user behavior sequences, a single token cannot be determined using its nearby tokens, because the mutual information between a token and its context is small. For this reason, most state-of-the-art representation learning methods are not applicable to the user behavior sequences data.
+Embeddings are popular for representing different types of objects across various domains and applications in machine learning. 
+Most of the embedding methods in the area of representation learning, however, have been focused on the core machine learning domains, including NLP (e.g., ELMO~\citep{Peters2018DeepCW}, BERT~\citep{Devlin2019BERTPO}), speech (e.g., CPC~\citep{Oord2018RepresentationLW}) and computer vision (CV)~\citep{Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
+Note that NLP, audio and computer vision domains are similar in the sense that the data of this type is "continuous": a short term in NLP can be accurately reconstructed from its context, similar to the way a pixel can be reconstructed from its neighboring pixels in CV. This fact underlies popular approaches for representation learning in NLP, such as BERT’s Cloze task~\citep{Devlin2019BERTPO}, and in audio and computer vision, such as CPC~\citep{Oord2018RepresentationLW}. In contrast, a single token cannot be properly determined from its neighbor tokens for many types of financial transactional sequences because the mutual information between a token and its neighbors is limited. For this reason, most of the state-of-the-art representation learning methods are not applicable to the customer's transactional sequences in many financial applications.
 
 %\footnote{See, e.g., keynote by Yann LeCun at ICLR-20: https://www.iclr.cc/virtual\_2020/speaker\_7.html}%
-
-
 
  %The analysis of these sequences constitutes an important sub-field of machine learning~\citep{Laxman2008StreamPU, Wiese2009CreditCT, Zhang2017CreditRA, Bigon2019PredictionIV}.
 
 %at banks, %phone calls and messages at telecom,purchase history at retail and click-stream data of online services. 
-
-
-
-
-
-%*** SAY THAT EMBEDDINGS ARE USEFUL IN BUILDING ML MODELS IN THE CONTEXT OF LARGE FINANCIAL SERVICES COMPANIES WHEN DATA IS DISTRIBUTED ACROSS VARIOUS DIVISIONS AND SUBSIDIARIES OF A LARGE ORGANIZATION. THIS IS THE CASE BECAUSE DIRECT DATA SHARING CAN BE PROBLEMATIC DUE TO SECURITY/PRIVACY AND DATA VOLUME REASONS AND EMBEDDINGS PROVIDE A SIGNIFICANTLY BETTER DATA SHARING MECHANISMS WITHIN THE ECOSYSTEM OF A LARGE ORGANIZATION NEEDED FOR BUILDING ML MODELS THAN DIRECT DATA SHARING. THEY ARE ALSO HELPFUL FOR DS-ES TO BUILD NEW ML MODELS IN A FASTER AND MORE EFFECTIVE MANNER. ***
-
-%*** IN THIS PAPER WE PROPOSE A NOVEL WAY TO BUILD EMBEDDING THAT IS PARTICULARLY WELL SUITED FOR LARGE AND DIVERSE FINANCIAL SERVICES ORGANIZATIONS AND HOLDING COMPANIES. IN PARTICULAR, THESE EMBEDDINGS ARE BASED ON .... ****
 
 %The size of the dataset is crucial for the performance of modern supervised learning techniques~\citep{Sun2017RevisitingUE}. However, considering the rapid emergence of new applications and tasks in different domains, it is not possible to collect enough labeled data for many real-world scenarios. This problem motivates extensive research~\citep{Tan2018ASO, Pan2010ASO} in the area of knowledge transfer where a model trained for one task can be further used as a good starting point for training in other tasks. 
 
@@ -170,34 +169,40 @@ NLP, audio and computer vision domains are similar in the sense that the data of
 %, e.g., transactions, search queries, purchase history, phone calls and messages. 
 
 
-
-
-%IN THIS PAPER WE PROPOSE A NOVEL WAY TO BUILD EMBEDDING THAT IS PARTICULARLY WELL SUITED FOR LARGE AND DIVERSE FINANCIAL SERVICES ORGANIZATIONS AND HOLDING COMPANIES. IN PARTICULAR, THESE EMBEDDINGS ARE BASED ON .
-In this paper, we propose a novel method, called \emph{COntrastive Learning for Event Sequences (CoLES)}, to build user behavior embeddings that is particular well suited for large and diverse financial services organisations and holding companies. It is based on a novel theoretically grounded data augmentation strategy, which adapts the ideas of contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB} to the discrete event sequences domain in a self-supervised setting.
+In this paper, we propose a novel method, called \emph{COntrastive Learning for Event Sequences (CoLES)}, to build customer's embeddings of transactional sequences that is particularly well suited for large and diverse financial services organisations and holding companies. It is based on a theoretically grounded data augmentation strategy, which adapts the ideas of contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB} to customer transactional sequences in a self-supervised manner.
 %Most of the existing contrastive learning methods have been successfully applied in core machine learning domains. 
-The aim of contrastive learning is to represent semantically similar objects (\textit{positive pairs} of images, video, audio, etc.) closer to each other, while dissimilar ones (\textit{negative pairs}) further away. Positive pairs are obtained for training either {\it explicitly}, e.g., in a manual labeling process or {\it implicitly} using different data augmentation strategies (\cite{Falcon2020AFF}). We treat explicit cases as a {\it supervised} approach and implicit cases as a {\it self-supervised} one. In most applications, where each person is represented by one sequence of events, there are no explicit positive pairs, and thus only self-supervised approaches are applicable. Our CoLES method is self-supervised and based on the observation that event sequences usually possess periodicity and repeatability of their events. We propose and theoretically justify a new augmentation algorithm, which generates sub-sequences of an observed event sequence and uses them as different high-dimensional 
+%A promising and rapidly growing approach known as self-supervised learning\footnote{See, e.g., keynote by Yann LeCun at ICLR-20: https://www.iclr.cc/virtual\_2020/speaker\_7.html} is the main choice for pre-training in situations where the amount of labeled data for the target task of interest is limited. Self-supervised learning is the main choice for pre-training in situations where the amount of labeled data for the target task of interest is very limited. 
+The aim of contrastive learning is to represent semantically similar objects (\textit{positive pairs} of images, video, audio, etc.) closer to each other in the embedding space, while dissimilar ones (\textit{negative pairs}) further away. Positive pairs are obtained for training either {\it explicitly}, e.g., in a manual labeling process or {\it implicitly} using different data augmentation strategies (\cite{Falcon2020AFF}). We treat explicit cases as a {\it supervised} approach and implicit cases as a {\it self-supervised} one. In most applications, where each person is represented by one sequence of transactions, there are no explicit positive pairs, and thus only self-supervised approaches are applicable. Our CoLES method is self-supervised and is based on the observation that event sequences (in our case sequences of financial transactions) usually possess periodicity and repeatability of their events. In particular, we propose and theoretically justify a new augmentation algorithm that generates sub-sequences of an observed event sequence and uses them as different high-dimensional 
 views of the same (sequence) object for contrastive learning.
 
 Representations produced by the CoLES model can be used directly as a fixed vector of features in some supervised downstream task (e. g. classification task) similarly to~\citep{Mikolov2013EfficientEO, Song2017LearningUE, Zhai2019LearningAU}. Alternatively, the trained CoLES model can be fine-tuned~\citep{Devlin2019BERTPO} for the specific downstream task.
-We applied CoLES to several user behavior sequence datasets with different downstream classification tasks. When used directly as feature vectors, CoLES representations achieve strong performance comparable to the hand-crafted features produced by data scientists.
-We demonstrate that fine-tuned CoLES representations consistently outperform methods based on other representations by a significant margin. %Moreover, we show the superiority of CoLES embeddings over the supervised approach applied to the partially labeled raw data due to an insufficient amount of the target to learn a sufficiently complex model from scratch.
-We deployed CoLES embeddings based on event sequence data at the large European financial services company. We tested CoLES against the pre-existing baselines and achieved superior performance on downstream tasks which produced significant financial gains, measured in hundreds of millions of dollars yearly.
 
-We provide the full source code for all the experiments described in the paper\footnote{https://github.com/sberbank-ai-lab/coles-paper}.
+We have applied CoLES to several datasets storing transactional sequences of customers with different downstream classification tasks and did it across several applications in a large European financial services company. Further, we have also done it to the four publicly available datasets of event sequences from different domains (see datasets description in Section~\ref{sec-exp}). When used directly as feature vectors, CoLES representations achieve strong performance results comparable to the hand-crafted features produced by data scientists.
+We also demonstrate in the paper that the fine-tuned CoLES representations consistently outperform the methods based on other representations by a significant margin. %Moreover, we show the superiority of CoLES embeddings over the supervised approach applied to the partially labeled raw data due to an insufficient amount of the target to learn a sufficiently complex model from scratch.
 
-This paper makes the following contributions:
+We have also deployed CoLES embeddings 
+%based on event sequence data 
+in several applications in our organization 
+%at the large European financial services company. 
+and tested our method against the baselines currently used in the company. 
+We demonstrate in the paper that we managed to achieve superior performance on the downstream tasks, which resulted in significant financial gains for the company measured in hundreds of millions of dollars per year.
+
+%We provide the full source code for all the experiments described in the paper\footnote{https://github.com/sberbank-ai-lab/coles-paper}.
+
+This paper makes the following contributions. We
 \begin{enumerate}
-\item We present the CoLES method that adapts contrastive learning in the self-supervised setting to the discrete event sequence domain.
-\item We propose a novel
+\item present the CoLES method adapting contrastive learning in the self-supervised setting to the discrete event sequence domain, in particular to the financial transactions domain
+\item propose and theoretically justify a new
 %theoretically grounded
-augmentation method for discrete event sequences.
-\item We demonstrate that CoLES consistently outperforms previously introduced supervised, self-supervised and semi-supervised learning baselines adapted to the event sequence domain.
-\item We describe the results of the application of CoLES embeddings for the real-word scenarios and show, that proposed method can be of significant value for day to day modelling in financial industry.
+augmentation method for discrete event sequences
+\item demonstrate that CoLES consistently outperforms previously introduced supervised, self-supervised and semi-supervised learning baselines adapted to the event sequence domain
+\item describe the results of applying CoLES embeddings to the real-word scenarios and show that the proposed method can be of significant value for the day-to-day modelling in the financial services industry.
 % approaches both in supervised and semi-supervised learning scenarios. %on four different user behavior sequence datasets.
 %we also propose a new theoretically grounded data augmentation strategy our method significantly outperforms other approaches adapted to event sequences domain
 \end{enumerate}
 
 The rest of the paper is organized as follows. In the next section, we discuss related studies on self-supervised and contrastive learning. In Section~\ref{sec-method} we introduce our new method CoLES for discrete event sequences. In Section~\ref{sec-exp} we demonstrate that CoLES outperforms several strong baselines including previously proposed contrastive learning methods adapted to event sequence datasets. Section~\ref{sec-conclusions} is dedicated to the discussion of our results and conclusions.
+Finally, we provide the full source code for all the experiments described in the paper\footnote{https://github.com/sberbank-ai-lab/coles-paper}.
 
 \section{Related work} \label{sec-rel-work}
 
@@ -308,15 +313,15 @@ To summarise, the CoLES method consists of three major ingredients: event sequen
 
 \subsubsection{Datasets}
 
-We compare our method with existing baselines on several publicly available datasets from various data science competitions. We chose datasets with sufficient amounts of discrete events per user.
+We compare our method with existing baselines on several publicly available datasets of event sequences from various data science competitions. We chose datasets with sufficient amounts of discrete events per user.
 
-\textbf{Age group prediction competition}\footnote{https://ods.ai/competitions/sberbank-sirius-lesson}. The dataset of 44M anonymized credit card transactions representing 50k persons was used to predict the age group of a person. The label is known for 30k persons, other 20k are unlabelled. The group ratio is balanced in the dataset. Each transaction includes the date, type, and amount being charged.
+\textbf{Age group prediction competition}\footnote{https://ods.ai/competitions/sberbank-sirius-lesson}. The dataset of 44M an\-onymized credit card transactions representing 50k persons was used to predict the age group of a person. The label is known for 30k persons, other 20k are unlabelled. The group ratio is balanced in the dataset. Each transaction includes the date, type, and amount being charged.
 
 %\textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/}. The dataset of 6,8M anonymized card transactions representing 15K clients was used to predict gender. Each transaction is characterized by date, type, amount and Merchant Category Code.
 
-\textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M anonymized card transactions representing 10K clients was used to predict a churn probability. Each transaction is characterized by date, type, amount and Merchant Category Code. 5k clients have labels, 5.2k clients haven't labels. Target is binary, almost balanced with proportions 0.55 and 0.45.
+\textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M an\-onymiz\-ed card transactions representing 10K clients was used to predict a churn probability. Each transaction is characterized by date, type, amount and Merchant Category Code. 5k clients have labels, 5.2k clients haven't labels. Target is binary, almost balanced with proportions 0.55 and 0.45.
 
-\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}. The task is to predict the in-game assessment results based on the history of children's gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labeled, the remaining 312k gameplays are not labeled. Each gameplay event is characterized by timestamp, event code, the incremental counter of events within a game session, time since the start of the game session, etc.
+\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}.  The task is to predict the in-game assessment results based on the history of children's gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labeled, the remaining 312k gameplays are not labeled. Each gameplay event is characterized by timestamp, event code, the incremental counter of events within a game session, time since the start of the game session, etc.
 
 \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
 
@@ -494,17 +499,17 @@ We created two types of embeddings: (1) embeddings, based on legal entity bank t
 
 We performed extensive tests of CoLES embenddings on several in-house datasets for different modelling tasks. Company embeddings are applied to the following tasks:
 \begin{itemize}
-    \item Corporate medical insurance lead generation
-    \item Credit lead generation for small and medium companies
-    \item Credit scoring for small and medium companies
-    \item Holding structure prediction
-    \item Fraudulent money transfers monitoring
+    \item \textbf{Corporate medical insurance lead generation.} In this task the model should predict an interest in corporate medical insurance product.
+    \item \textbf{Credit lead generation} for small and medium companies. In this task the model should predict an interest in taking a credit.
+    \item \textbf{Credit scoring} for small and medium companies. In this task the model should predict the default probability of a company.
+    \item \textbf{Holding structure prediction.} In this task the model should predict that a pair of companies are in same holding of companies.
+    \item \textbf{Fraudulent money transfers monitoring.} In this task the model is used to estimate the probability that that particular transaction is fraudulent.
 \end{itemize}
 Person embeddings are applied to the following tasks:
 \begin{itemize}
-    \item Retail credit scoring
-    \item Customer churn prediction
-    \item Life insurance lead generation
+    \item \textbf{Retail credit scoring.} In this task, the model should predict the default probability of a client, taking the retail credit.
+    \item \textbf{Customer churn prediction.} In this task, the model should predict the possibility that a client would stop using the company products (cards and deposits).
+    \item \textbf{Life insurance lead generation.} In this task the model should predict an interest in life insurance product.
 \end{itemize}
 
 
@@ -533,10 +538,10 @@ The compact version of embeddings can be used to minimize storage requirements o
 \textbf{Task} & \textbf{Baseline } & \textbf{CoLES} & \makecell{\textbf{Baseline} \\ \textbf{+ CoLES}} \\ 
 \midrule
 \textbf{Insurance lead generation} & 0.71 & 0.85 & \textbf{0.85} \\ % Corporate medical insurance
-\textbf{Credit lead generation} & 0.75 & 0.79 & 0.79 \\
-\textbf{Credit scoring} & 0.73 & 0.71 & 0.77 \\
-\textbf{Holding structure prediction} & 0.92 & 0.97 & 0.97 \\
-\textbf{Fraud monitoring} & 0.82 & 0.84 & 0.85 \\
+\textbf{Credit lead generation} & 0.75 & 0.79 & \textbf{0.79} \\
+\textbf{Credit scoring} & 0.73 & 0.71 & \textbf{0.77} \\
+\textbf{Holding structure prediction} & 0.92 & 0.97 & \textbf{0.97} \\
+\textbf{Fraud monitoring} & 0.82 & 0.84 & \textbf{0.85} \\
 \bottomrule
 \end{tabularx}
 \small{Baseline includes both transactional and non-transactional hand-crafted features. AUROC is used as quality metric.}
@@ -1024,5 +1029,6 @@ tSNE points from the churn prediction dataset are presented in Figure \ref{fig-t
 
 \fi
 
+\clearpage
+
 \end{document}
-\endinput
