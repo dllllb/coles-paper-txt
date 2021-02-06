@@ -242,11 +242,11 @@ While we have no access to the latent processes $\{X_e(t)\}$, we need to use aug
 The key property of event sequences that represent life activity is periodicity and repeatability of its events (see Figure~\ref{fig-subseq-kl} in the Appendix~\ref{app-sec-datasets} for the empyrical observations of these properties for the considered datasets). This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
 
 
-\begin{figure}[htbp]
-  \includegraphics[width=\linewidth]{figures/CoLES-arch.pdf}
+\begin{figure*}[htbp]
+  \includegraphics[width=\linewidth]{figures/CoLES.pdf}
 \caption{General framework}
   \label{fig-arch}
-\end{figure}
+\end{figure*}
 
 
 
