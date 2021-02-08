@@ -27,6 +27,7 @@
 \newcommand{\R}{\mathbb{R}}
 \renewcommand{\P}{\mathbb{P}}
 
+\newcommand{\GG}[1]{\textcolor{red}{[GG: #1]}}
 
 \title{CoLES: Contrastive Learning for Event Sequences with Self-Supervision}
 
@@ -41,16 +42,18 @@ Sberbank AI Lab
 Ivan Kireev \\
 Sberbank AI Lab
 \And
-Gleb Gusev \\
+Maria Ivanova \\
 Sberbank AI Lab
 \And
-Maria Ivanova \\
+Gleb Gusev \\
 Sberbank AI Lab
 \And
 Alexander Tuzhilin \\
 % atuzhili@stern.nyu.edu
 New York University
 }
+
+
 
 \begin{document}
 
@@ -130,7 +133,7 @@ in the two ways: (1) $c_e$ can be used as a feature vector for a task--specific 
 \subsection{Sampling of surrogate sequences as an augmentation procedure} \label{sec-pos-pairs}
 
 While we have no access to the latent processes $\{X_e(t)\}$, we need to use augmentation. Most augmentation techniques proposed earlier for continuous domains (such as image jitter, color jitter or random gray scale in computer vision, see \cite{Falcon2020AFF}) are not applicable to discrete events. A possible approach for augmentation is generating
-{\it sub-sequences} of the same event sequence $\{x_e(t)\}$. The idea proposed below resembles the bootstrap method~\citep{Efron1994Bootstrap}, which enables to generate several bootstrap samples using only one sample of independent datapoints of a latent distribution. However, our setting is different, since we have no independent observations, so we should rely on different data assumptions. 
+{\it sub-sequences} of the same event sequence $\{x_e(t)\}$. The idea proposed below resembles the bootstrap method~\citep{Efron1994Bootstrap}, which enables to generate several bootstrap samples using only one sample of independent datapoints of a latent distribution. However, our setting is different, since we have no independent observations, so we should rely on different data assumptions.
 The key property of event sequences that represent life activity is periodicity and repeatability of its events (see Figure~\ref{fig-subseq-kl} in the Appendix~\ref{app-sec-datasets} for the empyrical observations of these properties for the considered datasets). This is a motivation for the \textit{Random slices} sampling method applied in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Each sub-sequence is generated from the initial sequence as its connected segment ("slice") using the following three steps. First, the length of the slice is chosen uniformly from possible values. Second, its starting position is uniformly chosen from all possible values. Third, too short (and optionally too long) sub-sequences are discarded. It could seem that the mean length of obtained sub-sequences are less than the mean length of sequences in the dataset. However, we show in the next section that the distribution of sub-sequences is close to the initial distribution in some realistic assumptions. The overview of the CoLES method is presented in Figure \ref{fig-arch}.
 
 
