@@ -309,7 +309,7 @@ Generate vector $inds$ of length $l$ with random integers from [1,k].\\
 \end{algorithm}
 
 We consider several baseline empirical strategies for the sub-sequence generation to compare with Algorithm~\ref{alg-slce-ss}. The simplest strategy is random sampling without replacement.
-One more strategy is to produce sub-sequences by the random splitting of the initial sequence to several connected segments without intersection between them. As presented in Algorithm~\ref{alg-disj-ss}, to generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}. The motivation is that intersections between sub-sequences may possibly lead to overfilling since exact sub-sequences of events are the same and may be "remembered" without learning a deeper level of similarities.
+One more strategy is to produce sub-sequences by the random splitting of the initial sequence to several connected segments without intersection between them. As presented in Algorithm~\ref{alg-disj-ss}, to generate k sub-sequences, the following procedure should be repeated k times: take a random number of elements from the sequence \textit{without replacement}. The motivation is that intersections between sub-sequences may possibly lead to overfitting since exact sub-sequences of events are the same and may be "remembered" without learning a deeper level of similarities.
 
 % Note, that the order of events in generated sub-sequences is always preserved.
 
@@ -460,7 +460,7 @@ Note that all neural network baselines use the same architecture of the encoder 
 
 \subsubsection{Features of CoLES}
 
-To evaluate the proposed method of sub-sequence generation (see Section~\ref{sec-pos-pairs}) we compared it with two alternative strategies described in the Section~\ref{sec-training}. The results are presented in Table~\ref{tab-pair-gen}. The proposed random slices sub-sequence generation strategy significantly outperforms alternative strategies
+To evaluate the proposed method of sub-sequence generation (see Section~\ref{sec-pos-pairs}) we compared it with two alternative strategies described in the Section~\ref{sec-training}. The results are presented in Table~\ref{tab-pair-gen}. The proposed random slices sub-sequence generation strategy significantly outperforms alternative strategies.
 %, what confirm theoretical results (see Section \ref{sec-theory}).
 Also, note that the random samples strategy is similar to the augmentation strategy proposed by \cite{Yao2020SelfsupervisedLF}, and the random disjoint samples strategy is similar to sub-sequence generation proposed by \cite{Ma2020DisentangledSI}.
 
