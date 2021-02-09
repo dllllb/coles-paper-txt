@@ -573,7 +573,7 @@ Jun 22 & 40 & USD & US & \makecell[l]{Household \\ Appliance} \\
 
 \begin{table}
 \centering
-\caption{Data structure of a sequence of three bank transfers between the legal entities}
+\caption{Data structure of a sequence of three bank transfers between legal entities}
 \begin{tabular}{lllllll}
 \toprule
 \textbf{Date} & \textbf{Amount} & \textbf{Currency} & \textbf{Sender} & \textbf{Receiver} & \textbf{Type} \\
@@ -583,31 +583,31 @@ Jul 11 & 5000 & USD & 5424443 & 1232323 & 12 \\
 Jul 12 & 14000 & USD & 1232323 & 5424443 & 14 \\
 \bottomrule
 \end{tabular}
-\small{The information about company business and the company region is encoded in the first letters of the company identifier, stored in "Sender" and "Receiver" fields.}
+\small{The information about company business and the company region is encoded in the first letters of the company identifier stored in "Sender" and "Receiver" fields.}
 \label{tab-org-tr-data}
 \end{table}
 
 We are actively using self-supervised CoLES embenddings across the ecosystem of a large European financial services company.
-In particular, we created two types of embeddings: (1) \emph{company embeddings} of the clients of the bank representing small and medium size businesses that are based on commercial transactions and operational histories of these businesses and (2) \emph{personal embeddings} of individual/retail customers of the company based on their debet/credit card transactional histories. Table~\ref{tab-tr-data} and Table~\ref{tab-org-tr-data} provide some examples of the transactional data used for building personal and company embeddings. Overall, the dataset of 10 million corporate clients with the mean number of 200 transactions per client was used to train the model to generate company embeddings, and the dataset of 5 million clients with the mean number of 400 transactions per client was used to train the model producing personal embeddings. These two "in-house" commercial datasets are much larger than the public datasets described in Section~\ref{sec-exp}, and this  availability of extensive amounts of self-supervised training data allowed us to generate embeddings of significantly higher quality than on the publicly available data.
+In particular, we created two types of embeddings: (1) \emph{company embeddings} of the clients of the bank representing small and medium--size businesses, these embeddings are based on commercial transactions and operational histories of these businesses and (2) \emph{personal embeddings} of individual/retail customers of the company, their embeddings are based on the debit/credit card transactional histories. Table~\ref{tab-tr-data} and Table~\ref{tab-org-tr-data} provide some examples of the transactional data used for building personal and company embeddings. Overall, the dataset of 10 million corporate clients with the mean number of 200 transactions per client was used to train the model to generate company embeddings, and the dataset of 5 million clients with the mean number of 400 transactions per client was used to train the model producing personal embeddings. These two "in-house" commercial datasets are much larger than the public datasets described in Section~\ref{sec-exp}, and this availability of extensive amounts of self-supervised training data allowed us to generate embeddings of significantly higher quality than on the publicly available data.
 
-We performed extensive tests of CoLES embenddings on these in-house datasets for different modelling tasks.
+We performed an extensive evaluation of CoLES embeddings on these in-house datasets by applying them to different downstream modelling tasks.
 Company embeddings are applied to the following use cases:
 \begin{itemize}
-    \item \textbf{Corporate medical insurance lead generation.} In this task the model should be able to predict client's interest in a corporate medical insurance product.
-    \item \textbf{Credit lead generation} for small and medium size businesses. In this task the model should predict an interest of a company in taking a credit.
-    \item \textbf{Credit scoring} for small and medium size businesses. In this task the model should predict the default probability of a company.
-    \item \textbf{Holding structure prediction.} In this task the model should predict if a pair of companies is in the same holding of companies.
-    \item \textbf{Fraudulent money transfers monitoring.} In this task the model is used to estimate the probability that that a particular transaction is fraudulent.
+    \item \textbf{Corporate medical insurance lead generation.} In this task, the model should be able to predict client's interest in a corporate medical insurance product.
+    \item \textbf{Credit lead generation} for small and medium size businesses. In this task, the model should predict an interest of a company in taking a credit.
+    \item \textbf{Credit scoring} for small and medium size businesses. In this task, the model should predict the the probability of a company's default..
+    \item \textbf{Holding structure prediction.} In this task, the model should predict if a pair of companies are in the same holding of companies.
+    \item \textbf{Fraudulent money transfers monitoring.} In this task, the model is used to estimate the likelihood that a particular transaction is fraudulent.
 \end{itemize}
-Personal embeddings are applied to the following use cases:
+Personal embeddings are applied to the following downstream~tasks:
 \begin{itemize}
-    \item \textbf{Retail credit scoring.} In this task, the model should predict the probability of default when a client is taking a retail credit.
+    \item \textbf{Retail credit scoring.} In this task, the model should estimate the probability of default when a client is taking a retail credit.
     \item \textbf{Customer churn prediction.} In this task, the model should predict the possibility that a client would stop using the company products (cards and deposits).
-    \item \textbf{Life insurance lead generation.} In this task the model should predict an interest in a life insurance product.
+    \item \textbf{Life insurance lead generation.} In this task, the model should predict an interest in a life insurance product.
 \end{itemize}
 
 
-We considered the following three scenarios in most of these use cases: (1) the baseline scenario where only the hand-crafted features were used for predictive modelling; (2) the CoLES scenario where pre-generated self-supervised modeling described in Section~\ref{sec-method} was used to generate embeddings subsequently used as features of predictive models; (3) the hybrid (Baseline + CoLES) scenario where both the hand-crafted features and the CoLES embeddings were used for predictive modelling. In all of these three scenarios we used the LightGBM method~\citep{Ke2017LightGBMAH} in predictive modelling.
+We considered the following three scenarios in most of these tasks: (1) the baseline scenario where only the hand-crafted features were used for predictive modelling; (2) the CoLES scenario where pre-generated self-supervised modeling described in Section~\ref{sec-method} was used to generate embeddings subsequently used as features of predictive models; (3) the hybrid (Baseline + CoLES) scenario where both the hand-crafted features and the CoLES embeddings were used for predictive modelling. In all of these three scenarios, we used the LightGBM method~\citep{Ke2017LightGBMAH} in predictive modelling.
 In the 1st and the 3rd scenarios, we deployed the existing sets of hand-crafted features previously developed by the data science colleagues in our organization for the considered use cases (see Appendix~\ref{app-sec-hand} for the examples of  possible hand-crafted features).
 %, designed for this specific task by the other data science teams. 
 These features were partly based on the aggregate statistics of the transaction history and partly on some additional attributes obtained from other data sources.
@@ -628,7 +628,7 @@ Furthermore, compact version of embeddings can be used to minimize their storage
 
 \begin{table}
 \centering
-\caption{Performance Comparison of CoLES-based models with the Baseline Approaches Across Different Use Cases for Small and Medium Businesses}
+\caption{Performance comparison of CoLES-based models with the baseline approaches across different downstream tasks for small and medium--size businesses}
 \begin{tabularx}{\linewidth}{Xlll}
 \toprule
 \textbf{Task} & \textbf{Baseline } & \textbf{CoLES} & \makecell{\textbf{Baseline} \\ \textbf{+ CoLES}} \\ 
@@ -648,7 +648,7 @@ Furthermore, compact version of embeddings can be used to minimize their storage
 
 \begin{table}
 \centering
-\caption{Performance Comparison of CoLES-based Models with the Baseline Approaches Across Different Use Cases for the Individual/Retail Customers}
+\caption{Performance comparison of CoLES-based models with the baseline approaches across different downstream tasks for the individual/retail customers}
 \begin{tabular}{llll} 
 \toprule
 \textbf{Task } & \textbf{Baseline} & \textbf{CoLES} & \makecell{\textbf{Baseline}\\\textbf{+ CoLES}} \\
