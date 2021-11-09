@@ -1,0 +1,123 @@
+Reply to the Reviewer #3
+
+We are very grateful to you for your attentive reading and important comments. We address opportunites for improvement below:
+
+Q1:
+
+> The idea of using contrastive learning is valid. It will be useful to also include the discussion of the methods which use other learning targets, e.g. 'next word' and 'skip gram'(random walk) prediction. For example, in "Attributed Sequence Embedding." BigData'19, one of the learning objective is to reconstruct the next event.
+
+Please note, that in the section 4 we already consider 4 alternative self-supervised targets, namely, next sequence prediction task used in BERT, sequence order prediction task from ALBERT, replaced token detection approach from ELECTRA, and Contrastive Predictive Coding, which predicts embeddings of the next events (see section 4.1 for more details). The results of the comparison are presented in Table 3 and 4. As shown in Table 3 and 4 CoLES significantly outperforms all alternative self-supervised methods in both scenarios (unsupervised embeddings and fine-tuning).
+
+Q2:
+
+> The heuristic/assumption this paper has for labeling the similar/dissimilar sequence is questionable. Specifically, 1) in practice, many sequences in the dataset behave similarly. It is risky to maximize the distance between two subsequences just because that they belong to different sequences. 2) Even within the same sequence, there may be local patterns. Local patterns may come from different distribution. It is unclear to me if the good performance is the result of a particular usecase or dataset. This needs to be properly addressed.
+
+In the experiments (sec 4) we consider 4 completely different publicly available datasets (see section 4.0.1 for the description of the datasets). And shown in table 3 and 4, our approach significantly outperforms alternative self-supervised methods where negative samples are not used in the loss function.
+
+Also note that adding the negative penalty for close embeddings of other entities is the typical approach in contrastive learning in other domains e. g. the domain of images or speech. The main propose of the negative penalty is to prevent mode collapse, when all entities are placed in the same point in the embedding space.
+
+Q3:
+
+> The presentation can be improved. 1) The phrase 'positive pair' is mentioned early on in the paper without explanation. 2) Contribution 'real-word' -> 'real-world'
+
+We are really grateful for mentioning different typos and badly written parts in our paper. We will additionaly proofread the revised paper.
+
+O4:
+
+> It is unclear to me if this is the right venue for the work. It falls into the AI/ML topic. But it is not data intensive. RNN/LSTM/GRU does not scale well.
+
+The inference of RNN (or any other network) easily scales horisontally by partitioning inferenced data e.g. by user IDs and processing different users on different hosts. In order to perform experiments, described in section 4.3, we applied the trained model to the more than 70 billion of the card transactions and more than 2 billion of commercial transactions of legal entities. We used Apache Spark on top of Hadoop cluster for horisontal scaling. In our case there was no need to use all available data for self-supervised training.
+
+Also note, that training of RNN (or any other neural net) also scales horisontally by using the distributed version of the gradient descent algorithm. In our experiments on huge datasets described in section 4.3, we used only part of the available client data for the training (10 million corporate clients, and 5 million individual clients). But applied the trained model to the all available clients which had more than 90 million cards in total.
+
+We will add more details about the experiments in section 4.3 to the paper.
+
+
+
+Reply to the Reviewer #4
+
+We are very grateful to you for your attentive reading and for the deep and detailed comments. We address opportunites for improvement below:
+
+O1:
+
+> Writing needs improvement. There are typos (mainly in sec 3.2, sec 4.1.2) and grammar errors here and there; The introduction is well written and clear, while the formulation part is badly written where the discussion is not clear (sec 3.3 batch generation and pairwise distance calculation).
+
+We are really grateful for mentioning different typos and badly written parts in our paper. We will additionaly proofread the revised paper and will put more effort to improve the Section 3.
+
+O2:
+
+> In Sec 3.2 subsequence random sampling algorithm, the descriptions of the three steps are not consistent with Algorithm 1.
+
+Thank you for pointing this out, there are indeed some minor inconsistencies in the descripion of the algorithm, we will fix them.
+
+> Why use continuous slice? although this paper also shows results of other sampling methods, the one used is not well justified and is too naive to be ideal. Why not directly sample T_i from [m, M]? Algo 1 can be simplified?
+
+One practical motivation of using the continuous slices instead of direct sampling from T_i is that we want to preserve some small patterns of events e.g. frequent pairs of events in the sampled subsequences. Also, it is possible to show that for the proposed algorithm, the distribution of the generated sub-sequences is close to the initial distribution of sequences in some realistic assumptions. We have not included the detailed theoretical analysis of that fact due to the limiations to the paper size. We wil try to add more details in the revised version of the paper.
+
+Also, note, that as shown in table 2, the proposed algorithm performs significantly better than the other alternatives.
+
+O3:
+
+> In Sec 3.3 model training, again, the method being used is kind of naive and should test out more alternatives.
+
+As we briefly mention in section 4.2.1, we evaluated several possible loss functions and found that even the basic variant of contrastive learning loss, performs on par or better than other losses on the downstream tasks. Our hypothesis is that improvements obtained in object recognition tasks does not necessarily lead to gains in other downstream tasks. We will add the results of comparison of different losses to the ablation study in the revised version of the paper.
+
+> and why ‘perform normalization of the embedding vectors' can makes 'this procedure more computationally effective'?’
+
+For the normalized vectors the squared euclidean distance can be represented as 2(1- dot(X, Y)), hence, normalisation allows to slightly optimize the calculation of distances between the pairs of vectors. We'll clarify that in the revised version of the paper. Also, normalisation of embeddings typically make the training more stable, since it limits the maximum possible lengths of the vectors.
+
+O4:
+
+> In Sec 3.4 encoder. the sequence encoder ‘use the recurrent network (RNN) similarly to [30]’, which should try out more design choices. Although in tab 1, this paper actually uses GRU and LSTM, options like BRNN, transformer (self-attention), etc are good alternatives to consider.
+
+As we mention in section 4.3.1, the usage of GRU architecture allows to easily update an embedding of the already processed sequence when new events are arrived. It is enough to initialize the GRU hidden state by the current version of embedding and process only the new events without reprocessing the whole sequence.
+
+We also did the ablation study and compared the GRU with other options including Transformer encoder, but had to remove the results due to the paper size limiations. We will add more detailed ablation study in the revised version of the paper.
+
+O5:
+
+> In experiments. it is not clear whether the gain comes from the proposed self-supervised method, as in tab 4, very simple hand-crafted features can achieve very competitive results, which is actually better than the majority of the self-supervised baselines adopted.
+
+Note that the proposed method consistently outperforms other self-supervised baselines for nearly all considered datasets.
+
+Simple hand-crafted features can achieve competitive results if the events have clear structure for designing them. E.g it is easy to calculate some aggregate statistics per MCC code for the card transactions history. In the commercial settings (which we consider in section 4.3) we've seen different situation: it was hard to develop effective hand-crafted features for the transactions of the legal entities, since it is not clear how they can be grouped. We discuss the difference between simple events (card transactions) and more complex events (transactions of the legal entities) in the end of the section 4.3. Unfortunately we did not fild publicly available dataset with significant enough complexity of the events and have to present results on the more simple datasets.
+
+
+Reply to the Reviewer #5
+
+We are very grateful to you for your attentive reading and important comments. We address opportunites for improvement below:
+
+O1:
+
+> The presentation of this paper can benefit from a better positioned motivating example of CoLES. The first paragraph of the introduction mentions sharing transaction sequences across organization divisions as a motivating scenario. However, related issues such as data privacy or domain adaptation are not the main contributions of CoLES. I think the improved representation quality is the main focus instead. I think the authors can present a motivating example based on a real-world data science application on analyzing event sequences and discuss why we need better representations. I think this example can be followed by the discussion of why representation learning methods from CV or NLP are not expected to do well for event sequences.
+
+In section 4.3 we briefly present the real-word scenario of analyzing commercial transactions of the legal entities in a large European financial services company. The main issue is that we can not share any data  and can not share many subtle details on that experiments. Hence, we resorted to the publicly available datasets which are significantly smaller and contain rather simple sequences of events.
+
+Q2:
+
+> The contrastive learning techniques introduced in this paper seem quite standard. I think there are many other design choices that can be taken. For example, for data augmentation, one can take non- consecutive subsequences instead of consecutive ones. Similarity functions other than euclidian distance are also possible. It will be nice if the authors can discuss these changeable parts and potential design choices.
+
+We briefly describe some of the possible design choices and their impact in the section 4.2.1. We compared the proposed data augmentation strategy with two alternatives and present the results in section 4.2.1 in table 2.
+
+We also considered some altenatives for similarly function, e. g. cosine distance, but did not see the significant difference in the experiment results. Hence, we decided to shorten that part of the paper. We will add more details in the revised version of the paper.
+
+Q3:
+
+> The experiment section can benefit from having an ablation study. It is interesting to understand the effectiveness of the data augmentation technique compared to other possible designs, the choice of representation models, and the loss functions. A potential baseline for the loss function can be the one used in SimCLR.
+
+We briefly describe some design choices, including loss function alternatives in the section 4.2.1. We also did the ablation study and considered other design choices, including different encoder architectures, different types of losses and negative sampling. But we had remove the details of some experiments due to the paper size limiations. We will add more detailed ablation study in the revised version of the paper.
+
+11. Additional remarks:
+
+> In Section 4.0.1, it will be nice if there can be a table summarizing the dataset statistics.
+
+Sounds like a good idea, we'll try to add the table with dataset statistics if there will be some spare space after the other improvements.
+
+
+To all the reviewers: last important notes
+
+We would like to emphasise important points of our paper:
+
+The domain of event sequences is very important in a wide range of business applications, including finance, online services, e-commerce, recommender systems, telecom, and etc. This practical domain is not similar to the domains of texts, audio, or CV (see our reply to the first reviewer). 
+Before our work, there was no evidence that any self-supervised learning methods can show superiority in the discrete event sequences domain. 
+We implemented our method in one European bank, and it already brings hundreds of millions of dollars yearly.
