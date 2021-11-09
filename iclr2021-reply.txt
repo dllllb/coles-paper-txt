@@ -72,7 +72,11 @@ Cons:
  
 Rating: 5: Marginally below acceptance threshold
 Confidence: 4: The reviewer is confident but not absolutely certain that the evaluation is correct
+
+
+
 Reply 2
+
 We are very grateful to you for your attentive reading and important comments. We address your questions below:
 
 > When the authors use CPC as a baseline, do they consider the same data augmentation and random sampling techniques as shown in Fig1.? It is not very convincing that CPC will perform worse than the regular contrastive loss function
@@ -155,7 +159,7 @@ Confidence: 3: The reviewer is fairly confident that the evaluation is correct
 
 Reply 3
 
-We are very grateful to you for your attentive reading and important comments.  We are also really grateful for mentioning different typos in our paper. We address your questions below:
+We are very grateful to you for your attentive reading and important comments. We are also really grateful for mentioning different typos in our paper. We address your questions below:
 
 > It was not clearly stated how CoLES was used to solve the classification (1, 3, 4) and regression (2) problems.
 
