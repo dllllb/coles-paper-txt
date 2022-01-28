@@ -8,7 +8,7 @@ S1. The paper clearly describe the assumption and the proposed techniques.
 S2. The idea of using contrastive loss for learning sequence embedding in an unsupervised way is valid.
 S3. The experimental evaluation is conducted in real-world scenarios and has discussion on several use cases.
 7. Describe in detail all opportunities for improvement, labeled O1, O2, O3, etc.
-O1. The idea of using contrastive learning is valid. It will be useful to also include the discussion of the methods which use other learning targets, e.g. 'next word' and 'skip gram'(random walk) prediction. For example, in "Attributed Sequence Embedding." BigData'19, one of the learning objective is to reconstruct the next event.
+ 
 O2. The heuristic/assumption this paper has for labeling the similar/dissimilar sequence is questionable. Specifically, 1) in practice, many sequences in the dataset behave similarly. It is risky to maximize the distance between two subsequences just because that they belong to different sequences. 2) Even within the same sequence, there may be local patterns. Local patterns may come from different distribution. It is unclear to me if the good performance is the result of a particular usecase or dataset. This needs to be properly addressed.
 O3. The presentation can be improved.
 1) The phrase 'positive pair' is mentioned early on in the paper without explanation. 2) Contribution 'real-word' -> 'real-world'
