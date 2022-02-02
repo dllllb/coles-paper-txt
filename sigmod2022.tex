@@ -769,11 +769,9 @@ Note that it is more difficult to design valuable hand-crafted features for comp
 
 In order to minimise the efforts of deploying CoLES embeddings inside the company, we used an ETL process for systematic recalculation of embeddings when new transactional data arrives.
 
-In particular, the encoder based on an RNN-type architecture such as GRU~\citep{Cho2014LearningPR} allows to calculate embedding $c_{t+k}$ by updating embedding $c_t$ instead of  calculating embedding $c_{t+k}$ from the whole sequence of past events $z_{1:t}$: $c_k = rnn(c_t, z_{t+1:k})$. We use this optimization to reduce the inference time to update already existing client embeddings with new transactional events that occurred after the previous calculation of embeddings. This is possible due to the recurrent nature of RNN-like networks.
+In particular, the encoder based on an RNN-type architecture such as GRU~\citep{Cho2014LearningPR} allows to calculate embedding $c_{t+k}$ by updating embedding $c_t$ instead of calculating embedding $c_{t+k}$ from the whole sequence of past events $z_{1:t}$: $c_k = rnn(c_t, z_{t+1:k})$. We use this optimization to reduce the inference time to update already existing client embeddings with new transactional events that occurred after the previous calculation of embeddings. This is possible due to the recurrent nature of RNN-like networks.
 
-Furthermore, compact version of embeddings can be used to minimize their storage (or transfer) volume. To produce the compact version, we discretized the components of the embedding vectors, i.e. we mapped 8-byte float values to the discrete set of values in the range from 0 to 15. After discretization, each component of the embedding vector is stored in 4 bits, hence, a 256-dimensional embedding can be stored in 128 bytes.
-% Since it is not possible to update compact embeddings using the optimized procedure described in the previous paragraph, the compact version is being used for storing the historical versions of embeddings calculated for some specific dates and, also, for data exchange purposes.
-
+Furthermore, compact version of embeddings can be used to minimize their storage (or transfer) volume. To produce the compact version, we discretized the components of the embedding vectors, i.e. we mapped 8-byte float values to the discrete set of values in the range from 0 to 15. After discretization, each component of the embedding vector is stored in 4 bits, hence, a 256-dimensional embedding can be stored in 128 bytes. The discretization operation is partly receiversible, hence, it is still possible to update discretized embedding as discussed in previous paragraph.
 
 \begin{table}
 \centering
