@@ -156,18 +156,18 @@ Major Revision Items:
 
 Revised paper cover letter
 
-We've made the following updates in the revised version of the paper:
+We significantly revised the paper according to the reviewers comments. We've made the following updates in the revised version of the paper:
 
-We've updated the Section 3.x ...
+We've updated the Section 3.3 to make training objectives more clear.
 
-Please note that we address the critical assumption made about sequences' data distributions in the following way: ...
+Please note that we address the critical assumption made about sequences' data distributions in the following way: In Section 4.0.2 we measure the KL-divergence between two kinds of samples: (1) between random slices of the same sequence, generated using a modified version of the Algorithm 1 where overlapping events are dropped and (2) between random sub-samples taken from different sequences. We show that for all consdered dataset the mean KL-divergence is significantly smaller than for the textual data, which does not have periodicity and repeatability properties.
 
-We've extended Section ... and described the scalability approaches used ...
+We've extended Section 4.3.1 and described the scalability approaches used during the deployment of our method in our organization
 
 We've rewritten the introduction and made more clear statements about...
 
-We've added additional experiments ...
+We've updated the Section 4.2.1 and added additional experiments comparing desing choices of the method with possible alternatives.
 
 We also fixed different presentation issues and additionally proof-read the paper
 
-The significant changes  made to the paper are outlined in magenta.
+The significant changes made to the paper are outlined in magenta.

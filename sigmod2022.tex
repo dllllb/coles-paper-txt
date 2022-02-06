@@ -503,7 +503,7 @@ We compare our method with existing baselines on several publicly available data
 
 To check that considered datasets follow our repeatability and periodicity assumption made in Section~\ref{sec-pos-pairs}
 %and used for theoretical analysis in Section~\ref{sec-theory}
-we performed the following experiments. We measure the KL-divergence between two kinds of samples: (1) between random sub-samples of the same sequence, generated using a modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The results are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
+we performed the following experiments. We measure the KL-divergence between two kinds of samples: (1) between random slices of the same sequence, generated using a modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The results are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
 Also note that additional plot (\ref{fig-subseq-kl-texts}) is provided as an example for data without any repeatable structure.
 
 \subsubsection{Dataset split}
