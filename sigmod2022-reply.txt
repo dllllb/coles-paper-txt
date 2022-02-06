@@ -158,7 +158,7 @@ Revised paper cover letter
 
 We significantly revised the paper according to the reviewers comments. We've made the following updates in the revised version of the paper:
 
-We've updated the Section 3.3 to make training objectives more clear.
+We've updated the Section 3.2 and Section 3.3 to make training objectives and subsample generation algorithm more clear.
 
 Please note that we address the critical assumption made about sequences' data distributions in the following way: In Section 4.0.2 we measure the KL-divergence between two kinds of samples: (1) between random slices of the same sequence, generated using a modified version of the Algorithm 1 where overlapping events are dropped and (2) between random sub-samples taken from different sequences. We show that for all consdered dataset the mean KL-divergence is significantly smaller than for the textual data, which does not have periodicity and repeatability properties.
 
