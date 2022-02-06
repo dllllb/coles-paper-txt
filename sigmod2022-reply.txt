@@ -164,7 +164,7 @@ Please note that we address the critical assumption made about sequences' data d
 
 We've extended Section 4.3.1 and described the scalability approaches used during the deployment of our method in our organization
 
-We've rewritten the introduction and made more clear statements about...
+We've rewritten the introduction and made more clear statements about the benefits of using sequence embeddings for the real-word scenarios of bigdata analysis and predictive modelling.
 
 We've updated the Section 4.2.1 and added additional experiments comparing desing choices of the method with possible alternatives.
 
