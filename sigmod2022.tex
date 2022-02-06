@@ -203,7 +203,6 @@ representations of sequential and/or composite multi-modal data.
 % Examples of these sequences of transactions are credit card transactions, savings and checking account transactions, and investment transactions for individual customers, as well as debiting and crediting activities for accounts receivables of business customers.
 % One way to address this problem and share sequences of transactions across the entire organization is to represent them in the form of \emph{embeddings} that comprise continuous fixed-length vectors capturing the ``essence'' of transactional sequences through learning their internal patterns and compressing these (long) sequences into low-dimensional vector representations.
 
-
 Most embedding methods in the area of representation learning, however, have been focused
 on the core machine learning domains, including NLP (e.g., ELMO~\citep{Peters2018DeepCW}, BERT~\citep{Devlin2019BERTPO}), speech (e.g., CPC~\citep{Oord2018RepresentationLW}) and
 computer vision (CV)~\citep{Doersch2015UnsupervisedVR, Oord2018RepresentationLW}.
@@ -230,24 +229,27 @@ data, which exhibits customer behavior of a certain type and constitutes valuabl
 information for the fraud prevention and development of efficient financial products.
 
 In this paper, we propose a novel self-supervised method for embedding discrete event
-sequences, called \emph{COntrastive Learning for Event Sequences (CoLES)}, which applies
-a special data augmentation strategy to contrastive learning~\citep{Xing2002DistanceML, Hadsell2006DimensionalityRB}.
+sequences, called \emph{COntrastive Learning for Event Sequences (CoLES)}, which is based
+on contrastive learning, \citep{Xing2002DistanceML, Hadsell2006DimensionalityRB}, with
+a special data augmentation strategy.
 % 
 Contrastive learning aims to learn a representation $x \mapsto \phi(x)$, which brings
 \emph{positive pairs}, i.e. semantically similar objects, \emph{closer} to each other
 in the embedding space, while \emph{negative pairs}, i.e. dissimilar objects, \emph{further}
-apart. Specifically, in the most basic case contrastive approaches minimize with respect to $
-    \phi \colon \mathcal{X} \to \mathbb{R}^n
-$ the objective $
-    d(\phi(x_i), \phi(x_j))
-$ for positive, and $
-    \max\bigl\{0, m - d(\phi(x_i), \phi(x_j)) \bigr\}
-$ for negative pairs $(i, j)$, where $d$ is the distance in the image space of $\phi$ and
-$m$ is desired margin between dissimilar objects.
+apart.
+% (ivannz) this piece is useless here, and reiterates what has JUST been said, but in mathy lingo
+% Specifically, in the most basic case contrastive approaches minimize with respect to $
+%     \phi \colon \mathcal{X} \to \mathbb{R}^n
+% $ the objective $
+%     d(\phi(x_i), \phi(x_j))
+% $ for positive, and $
+%     \max\bigl\{0, m - d(\phi(x_i), \phi(x_j)) \bigr\}
+% $ for negative pairs $(i, j)$, where $d$ is the distance in the image space of $\phi$ and
+% $m$ is desired margin between dissimilar objects.
 % ATTN (ivannz) this could use some survey reference from
 % https://lilianweng.github.io/lil-log/2021/05/31/contrastive-representation-learning.html
 %
-Positive-negative labeling is obtained either \emph{explicitly} from the known ground-truth
+Positive-negative pairs are obtained either \emph{explicitly} from the known ground-truth
 target data or \emph{implicitly} using \emph{self-supervised} data augmentation strategies
 \citep{Falcon2020AFF}. In the latter, the most common approach is conditional generation:
 for a given pair of distinct datapoints $x \neq y$ the positive pairs $(z, z')$ are sampled
