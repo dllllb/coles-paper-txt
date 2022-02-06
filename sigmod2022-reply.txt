@@ -151,3 +151,23 @@ Major Revision Items:
 5. Provide a more comprehensive discussion on design choices and add a more detailed ablation study to the experimental evaluation (Reviewer5 O2 and O3).
 
 6. Fix all presentation issues and improve writing clarity as suggested across all three reviews.
+
+
+
+Revised paper cover letter
+
+We've made the following updates in the revised version of the paper:
+
+We've updated the Section 3.x ...
+
+Please note that we address the critical assumption made about sequences' data distributions in the following way: ...
+
+We've extended Section ... and described the scalability approaches used ...
+
+We've rewritten the introduction and made more clear statements about...
+
+We've added additional experiments ...
+
+We also fixed different presentation issues and additionally proof-read the paper
+
+The significant changes  made to the paper are outlined in magenta.
