@@ -41,6 +41,7 @@
 \usepackage{textcomp}
 \usepackage{amsthm}
 \usepackage{amsmath}
+\usepackage{verbatim}
 
 \newtheorem{thm}{Theorem}
 \newtheorem{lem}{Lemma}
@@ -873,6 +874,39 @@ We compared CoLES with baselines described in Section~\ref{sec-baselines} in two
 In particular, Table~\ref{tab-downstream-res-emb} shows that even unsupervised CoLES embeddings perform on par and sometimes even better than hand-crafted features. Also note that CoLES embeddings consistenlty outperform embeddings produced by the other self-supervised baselines on each dataset.
 
 \revised{Simple hand-crafted features can achieve competitive results if the events have a clear structure for designing them. E.g. it is easy to calculate some aggregate statistics per MCC code for the card transactions history. In the commercial settings (which we consider in Section~\ref{sec-commercial}) we've seen different situation: it was hard to develop effective hand-crafted features for the transactions of the legal entities since it is not clear how they can be grouped. We discuss the difference between simple events (card transactions) and more complex events (transactions of the legal entities) at the end of Section~\ref{sec-commercial}.}
+
+\begin{comment}
+\begin{table}
+\centering
+\caption{Quality of unsupervised embeddings as features for the downstream task}
+\begin{tabularx}{\linewidth}{Xcccc}
+
+\toprule
+\textbf{Method} &
+\makecell{\textbf{Age} \\ \small{Accuracy}} &
+\makecell{\textbf{Churn} \\ \small{AUROC}} &
+\makecell{\textbf{Assess} \\ \small{Accuracy}} &
+\makecell{\textbf{Retail} \\ \small{Accuracy}}\\
+\midrule
+
+\textbf{Designed features} & $0.631$\tiny{$\pm 0.003$} & $0.825$\tiny{$\pm 0.004$} & \bm{$0.602$}\tiny{$\pm 0.005$} & \bm{$0.547$}\tiny{$\pm 0.001$} \\
+
+\textbf{SOP} & $0.493$\tiny{$\pm 0.002$} & $0.782$\tiny{$\pm 0.005$} & $0.577$\tiny{$\pm 0.002$} & $0.428$\tiny{$\pm 0.001$}\\
+
+\textbf{NSP} & $0.622$\tiny{$\pm 0.004$} & $0.830$\tiny{$\pm 0.004$} & $0.581$\tiny{$\pm 0.003$} & $0.425$\tiny{$\pm 0.002$}\\
+
+\textbf{RTD} & $0.632$\tiny{$\pm 0.002$} & $0.801$\tiny{$\pm 0.004$} & $0.580$\tiny{$\pm 0.003$} & $0.520$\tiny{$\pm 0.001$}\\
+
+\textbf{CPC} & $0.594$\tiny{$\pm 0.002$} & $0.802$\tiny{$\pm 0.003$} & $0.588$\tiny{$\pm 0.002$} & $0.525$\tiny{$\pm 0.001$}\\
+
+\textbf{CoLES} & \bm{$0.638$}\tiny{$\pm 0.007$} & \bm{$0.843$}\tiny{$\pm 0.003$} & $0.601$\tiny{$\pm 0.002$} & $0.539$\tiny{$\pm 0.001$} \\
+
+\bottomrule
+\end{tabularx} \\
+\small{average test set quality metric and its standard deviation for 5 runs on different folds is shown}
+\label{tab-downstream-res-emb}
+\end{table}
+\end{comment}
 
 \begin{table}
 \centering
