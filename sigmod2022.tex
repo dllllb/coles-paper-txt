@@ -54,7 +54,7 @@
 
 
 % draft macros
-\newcommand{\attn}[1]{{\color{magenta}{\textbf{#1}}}}
+\newcommand{\attn}[1]{{\color{cyan}{\textbf{#1}}}}
 \newcommand{\missingbibitem}[1]{\bibitem[{{\attn{citation needed}}}]{#1}}
 
 \begin{document}
@@ -579,56 +579,114 @@ with alternative variants. The results of the comparison is presented in Section
 \textbf{Negative sampling.} One challenge in contrastive learning approach is that positive pairs
 are overwhelmed by potential negative pairs. Furthermore, some of negative pairs are distant enough,
 to not provide any valuable feedback through $\mathcal{L}$ to $M$ during training, \citep{SimoSerra2015DiscriminativeLO,Schroff2015FaceNetAU}. We compare the common negative sampling
-methods in Section~\ref{sec-res}.
-
-\textbf{Pair distance calculation.}
-In order to draw negative samples, we need to compute the pairwise distance between all possible
-pairs of embedding vectors of a batch.
-
-In order to make this procedure computationally efficient we restrict $M$ to the class of maps that
-output vectors on a unit hyper-sphere in $\R^d$. Thus $
-    d_M(u, v)^2 = 2 - 2 M(\{\tilde{x}_u(t)\})^\top M(\{\tilde{x}_v(t)\})
+methods in Section~\ref{sec-res}. Since certain negative sampling approaches are distance-aware and
+to make the overall distance computation less inefficient we restrict the encoder $M$ to the class
+of maps that output vectors on a unit hyper-sphere in $\R^d$. Therefore the pairwise distance $
+    d_M(u, v)^2
+$ is just $2 - 2 c_u^\top c_v$, which only requires pairwise dot products between embeddings $
+    c_v = M(\{\tilde{x}_u(t)\})
 $.
-\revised{
-    For the normalized vectors, the squared Euclidean distance can be represented as $
-        2(1 - c_u^\top c_v))
-    $.
-    To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks.
-}
 
 \subsection{Encoder architecture} \label{sec-enc-arch}
 
-To embed a sequence of events to the fixed-size vector, we use an encoder network, which consists of two conceptual parts: the event encoder and the sequence encoder subnetworks. The whole encoder network is trained in the end-to-end manner.
+Embedding a sequence of events into a vector of fixed size requires encoding individual events
+followed by aggregating the entire sequence. The composite encoder model $M$ in CoLES is of
+the form $
+    M(\{x_t\})
+        := \phi_{\mathrm{seq}}(\{\phi_{\mathrm{evt}}(x_t)\})
+$, where $\phi_{\mathrm{evt}}$ and $\phi_{\mathrm{seq}}$ are event-level and sequence-level networks,
+respectively, trained in an end-to-end manner.
 
-\textbf{The event encoder} $e$ takes the set of attributes of each single event $x_t$ and outputs its representation in the latent space $\R^d$: $z_t = e(x_t)$. The event encoder consists of several embedding layers and batch normalization layers. Each categorical attribute is encoded by its corresponding embedding layer. Batch normalization is applied to numerical attributes of events. Outputs of all embedding and batch normalization layers are concatenated to produce latent representation $z_t$.
+\textbf{The event encoder} $\phi_{\mathrm{evt}}$ takes a set of attributes of each event $x_t$
+and outputs its intermediate representation in $\R^d$: $z_t = \phi_{\mathrm{evt}}(x_t)$. This
+encoder consists of several embedding layers and batch normalization layers. Each categorical
+attribute is encoded by \attn{its corresponding embedding layer}. Batch normalization is applied
+to numerical attributes of events. Outputs of all embedding and batch normalization layers are
+concatenated to produce $z_t$.
 
-\textbf{The sequence encoder} $s$ takes latent representations of the sequence of events: $ z_{1:T} = z_1, z_2, \cdots z_T $ and outputs the representation of the whole sequence $c_t$ in the time step $t$: $c_t = s(z_{1:t})$. \revised{In our experiments, we use GRU~\citep{Cho2014OnTP} recurrent network which demonstrated robust performance on the sequential data~\citep{Babaev2019ETRNNAD}.} The output produced for the last event is used to represent the whole sequence of events. In the case of GRU, the last output $h_t$ is a representation of the sequence.
+\textbf{The sequence encoder} $\phi_{\mathrm{seq}}$ takes the intermediate representations of
+the events $ z_{1:T} = z_1, z_2, \cdots z_T $ and outputs the representation $c_t$ of their
+sequence up to the time $t$: $c_t = \phi_{\mathrm{seq}}(z_{1:t})$. The last output $c_T$ is used
+as the embedding of the whole event sequence.
+\revised{
+In our experiments, we use GRU, \citep{Cho2014OnTP}, recurrent network which demonstrats
+robust performance on the sequential data, \citep{Babaev2019ETRNNAD}. In this case, $\phi_{\mathrm{seq}}$
+is computed with the recurrence $c_{t+1} = \mathrm{GRU}(z_{t+1}, c_t)$ starting from $c_0 = 0$.
+We note, that other architecture choice are possible, including LSTM and transformers, \citep{Hochreiter1997LongSM,Vaswani2017AttentionIA} (see Section~\ref{sec-ablation}).
+}
 
-\revised{Several other approaches can be used to encode a sequence~\citep{Hochreiter1997LongSM, Vaswani2017AttentionIA}. We compare popular options for the encoder architecture in Section~\ref{sec-ablation}.}
+\medskip
+To summarise, CoLES consists of three major ingredients: the event sequence encoder, the positive
+and negative pair generation strategy, and the loss function for contrastive learning.
 
-To summarise, the CoLES method consists of three major ingredients: event sequence encoder, positive and negative pair generation strategy and the loss function for contrastive learning.
-
-%In the next section, we describe our experiments of the comparison of the proposed method with several strong baselines on several public datasets.
+% In the next section, we describe our experiments of the comparison of the proposed method
+%  with several strong baselines on several public datasets.
 
 \section{Experiments} \label{sec-exp}
 
 \subsubsection{Datasets}
 
-We compare our method with existing baselines on several publicly available datasets of event sequences from various data science competitions. We chose datasets with sufficient amounts of discrete events per user.
+We compare our method with existing baselines on several publicly available datasets of
+event sequences from various data science competitions. We chose datasets with sufficient
+amounts of discrete events per user.
 
-\textbf{Age group prediction competition}\footnote{https://ods.ai/competitions/sberbank-sirius-lesson}. The dataset of 44M an\-onymized credit card transactions representing 50k persons was used to predict the age group of a person. The label is known for 30k persons, other 20k are unlabelled. The group ratio is balanced in the dataset. Each transaction includes the date, type, and amount being charged.
+\textbf{Age group prediction competition}%
+\footnote{
+    \url{https://ods.ai/competitions/sberbank-sirius-lesson}
+}
+The dataset of 44M an\-onymized credit card transactions representing 50K individuals
+was used to predict the age group of a person.
+\attn{The label is known for 30K records, other 20K are unlabelled.}
+The group ratio is balanced in the dataset. Each transaction includes the date, type,
+and amount being charged.
 
-%\textbf{Gender prediction competition}\footnote{https://www.kaggle.com/c/python-and-analyze-data-final-project/}. The dataset of 6,8M anonymized card transactions representing 15K clients was used to predict gender. Each transaction is characterized by date, type, amount and Merchant Category Code.
+% \textbf{Gender prediction competition}%
+% \footnote{
+%     \url{https://www.kaggle.com/c/python-and-analyze-data-final-project/}
+% }
+% The dataset of 6.8M anonymized card transactions representing 15K clients was used to
+% predict gender. Each transaction is characterized by date, type, amount and Merchant Category Code.
 
-\textbf{Churn prediction competition}\footnote{https://boosters.pro/championship/rosbank1/}. The dataset of 1M an\-onymiz\-ed card transactions representing 10K clients was used to predict a churn probability. Each transaction is characterized by date, type, amount and Merchant Category Code. 5k clients have labels, 5.2k clients haven't labels. Target is binary, almost balanced with proportions 0.55 and 0.45.
+\textbf{Churn prediction competition}%
+\footnote{
+    \url{https://boosters.pro/championship/rosbank1/}
+}
+The dataset of 1M an\-onymiz\-ed card transactions representing 10K clients was used to
+predict churn probability. Each transaction is characterized by date, type, amount and
+Merchant Category Code. 5K clients have labels, 5.2K clients are unlabelled labels.
+Target is binary, almost balanced with proportions $55:45$.
 
-\textbf{Assessment prediction competition}\footnote{https://www.kaggle.com/c/data-science-bowl-2019}.  The task is to predict the in-game assessment results based on the history of children's gameplay data. Target is one of 4 grades, with proportions 0.50, 0.24, 0.14, 0.12. The dataset consists of 12M gameplay events combined in 330k gameplays representing 18k children. 17.7k gameplays are labeled, the remaining 312k gameplays are not labeled. Each gameplay event is characterized by timestamp, event code, the incremental counter of events within a game session, time since the start of the game session, etc.
+\textbf{Assessment prediction competition}%
+\footnote{
+    \url{https://www.kaggle.com/c/data-science-bowl-2019}
+}
+The task is to predict the in-game assessment results based on the history of children's
+gameplay data. Target is one of four grades, with shares $0.50$, $0.24$, $0.14$, $0.12$.
+The dataset consists of 12M gameplay events combined in 330K gameplays representing 18K
+children. 17.7K gameplays are labeled, the remaining 312K gameplays are not labeled.
+Each gameplay event is characterized by a timestamp, an event code, an incremental counter
+of events within a game session, time since the start of the game session, etc.
 
-\textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
+\textbf{Retail purchase history age group prediction}%
+\footnote{
+    \url{https://ods.ai/competitions/x5-retailhero-uplift-modeling}
+}
+The task is to predict the age group of a client based on their retail purchase history.
+The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists
+of 45.8M retail purchases representing 400K clients. Each purchase is characterized by
+time, product level, segment, amount, value, loyalty program points received.
 
-%\textbf{Scoring competition}\footnote{https://boosters.pro/championship/alfabattle2/overview}. The dataset of 443M anonymized credit card transactions representing 1.47M persons was used to predict the probability of credit product default. The label is known for 0.96M persons, other 0.51M are unlabelled. The default rate is 2.76\% in the dataset. Each transaction includes the set of date features, set of type features, and amount being charged.
+% \textbf{Scoring competition}%
+% \footnote{
+%     \url{https://boosters.pro/championship/alfabattle2/overview}
+% }
+% The dataset of 443M anonymized credit card transactions representing 1.47M persons was
+% used to predict the probability of credit product default. The label is known for 0.96M
+% persons, other 0.51M are unlabelled. The default rate is 2.76\% in the dataset. Each
+% transaction includes the set of date features, set of type features, and amount being
+% charged.
 
-%As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-data}), these datasets satisfy the power law assumption for the sequence length distribution of Theorem~\ref{thm:distribution}. Also, as shown in Figure~\ref{fig-subseq-kl} (Appendix~\ref{app-sec-data}) the datasets satisfy the periodicity and repeatability assumption.
+% As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-data}), these datasets satisfy the power law assumption for the sequence length distribution of Theorem~\ref{thm:distribution}. Also, as shown in Figure~\ref{fig-subseq-kl} (Appendix~\ref{app-sec-data}) the datasets satisfy the periodicity and repeatability assumption.
 
 \subsubsection{Repeatability and periodicity of the datasets} \label{sec-period}
 
@@ -655,14 +713,29 @@ We compare our method with existing baselines on several publicly available data
     \centerline{\includegraphics[width=\linewidth]{figures/kl_dis_text.pdf}}
     \label{fig-subseq-kl-texts}
   \end{subfigure}
-  \caption{Periodicity and repeatbility of the data. KL-divergence between event types of two random sub-sequences from the same sequence is compared with KL-divergence between sub-sequences of different sequences. Additional plot (\ref{fig-subseq-kl-texts}) is provided as an example for data without any repeatable structure.}
+  \caption{
+    Periodicity and repeatbility of the data. KL-divergence between event types
+    of two random sub-sequences from the same sequence is compared with KL-divergence
+    between sub-sequences of different sequences. Additional plot (\ref{fig-subseq-kl-texts})
+    is provided as an example for data without any repeatable structure.
+  }
   \label{fig-subseq-kl}
 \end{figure*}
 
-To check that considered datasets follow our repeatability and periodicity assumption made in Section~\ref{sec-pos-pairs}
+To check that considered datasets follow our repeatability and periodicity assumption
+made in Section~\ref{sec-pos-pairs}
 %and used for theoretical analysis in Section~\ref{sec-theory}
-we performed the following experiments. We measure the KL-divergence between two kinds of samples: (1) between random slices of the same sequence, generated using a modified version of Algorithm~\ref{alg-slce-ss} where overlapping events are dropped and (2) between random sub-samples taken from different sequences. The results are shown in Figure~\ref{fig-subseq-kl}. As Figure~\ref{fig-subseq-kl} shows, the KL-divergence between sub-sequences of the same sequence of events is relatively small compared to the typical KL-divergence between sub-samples of different sequences of events. This observation supports our repeatability and periodicity assumption.
-Also note that additional plot (\ref{fig-subseq-kl-texts}) is provided as an example for data without any repeatable structure.
+we performed the following experiments. We measure the KL-divergence between two kinds
+of samples:
+(1) between random slices of the same sequence, generated using a modified version of
+Algorithm~\ref{alg-slce-ss} where overlapping events are dropped, and
+(2) between random sub-samples taken from different sequences. The results are shown in
+Figure~\ref{fig-subseq-kl}, which shows that the KL-divergence between sub-sequences of
+the same sequence of events is relatively small compared to the typical KL-divergence between
+sub-samples of different sequences of events. This observation supports our repeatability
+and periodicity assumption.
+Also note that additional plot (\ref{fig-subseq-kl-texts}) is provided as an example for
+data without any repeatable structure.
 
 \subsubsection{Dataset split}
 
