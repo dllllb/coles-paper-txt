@@ -443,12 +443,13 @@ rely on different data assumptions.
 The key property of event sequences that represent life activity is periodicity and repeatability
 of its events (see Section~\ref{sec-period} for the empirical observations of these properties
 for the considered datasets). This motivates the \emph{Random slices} sampling method applied
-in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Sub-sequences are sampled from a given
-sequence as continuous segments, ``slices'', using the following three steps.
+in CoLES, as presented in Algorithm~\ref{alg-slce-ss}. Sub-sequences $\{\tilde{x}_e\}$ are sampled
+from a given sequence $\{x_e(t)\}$ as continuous segments, ``slices'', using the following three
+steps.
 \revised{
-First, the length of the slice is chosen uniformly from admissible values. Second, too short
-(and, optionally, too long) sub-sequences are discarded.
-Third, the starting position is uniformly chosen from all possible values.
+    First, the length of the slice is chosen uniformly from admissible values.
+    Second, too short (and, optionally, too long) sub-sequences are discarded.
+    Third, the starting position is uniformly chosen from all possible values.
 }
 The overview of the CoLES method is presented in Figure \ref{fig-arch}.
 % It would seem that the mean length of obtained sub-sequences are less than the mean length
@@ -462,19 +463,21 @@ The overview of the CoLES method is presented in Figure \ref{fig-arch}.
         $k$: number of samples.
     \\ %sub-sequences to be produced. \\
     \textbf{input:}
-        A sequence $S$ of length $T$.
+        A sequence $S = \{z_j\}_{j=0}^{T-1}$ of length $T$.
     \\
     \textbf{output:}
         $\mathcal{S}$: sub-sequences of $S$.
     \\
     \BlankLine
     \For{$i\leftarrow 1$ \KwTo $k$}{
-        Generate random integer $T_i$ uniformly from $[1, T]$;
+        Generate a random integer $T_i$ uniformly from $[1, T]$;
         \\
-        \uIf{$T_i\in [m, M]$}{
-            Generate random integer $s$ from $[0, T - T_i - 1]$;
+        \uIf{$T_i\in [m, M]$}{  % burn-in and burn-out?
+            Generate a random integer $s$ from $[0, T - T_i)$;
             \\
-            Add $S_i := S[s: s + T_i-1]$ to $\mathcal{S}$;
+            Add the slice $
+                \tilde{S}_i := \bigl\{z_{s + j}\bigr\}_{j=0}^{T_i - 1}  % S[s : s + T_i - 1]
+            $ to $\mathcal{S}$;
             \\
         }
     }
@@ -531,38 +534,67 @@ in Section~\ref{sec-ablation}.
 % binomial deviance loss~\citep{Yi2014DeepML}, triplet loss \citep{Hoffer2015DeepML}, histogram loss
 % \citep{Ustinova2016LearningDE}, and margin loss \citep{Manmatha2017SamplingMI}. Among them,
 % contrastive loss showed best performance in experiments (see Appendix~\ref{app-sec-design}).
-
+% $
+%     \mathcal{L}
+%         = (1 - Y) \frac12 (D_W^i)^2
+%         + Y \frac12\max\{0, m - D_W^i \}^2
+% $
 \textbf{Contrastive loss} We consider a classical variant of the contrastive loss, proposed in
-\citep{Hadsell2006DimensionalityRB}: $
-    \mathcal{L}
-        = (1 - Y) \frac12 (D_W^i)^2
-        + Y \frac12\max\{0, m - D_W^i \}^2
-$, where $D_W^i$ is a distance function between embeddings in $i$-th labeled sample pair, the $Y$ is a binary variable identifying that the pair is positive. \revised{The main purpose of the negative pair closeness penalty is to prevent mode collapse when all entities are placed at the same point in the embedding space.} As proposed in~\citep{Hadsell2006DimensionalityRB}, we use euclidean distance function: $
-    D_W^i = D(A, B) = \sqrt{\sum_i(A_i - B_i)^2}
-$.
-% has a contrastive term for negative pairs of embeddings, which penalizes the model only if
-%  the distance between embeddings of negative pair is less than a margin $m>0$:
-
-% (ivannz) this piece is useless here, and reiterates what has JUST been said, but in mathy lingo
-% Specifically, in the most basic case contrastive approaches minimize with respect to $
-%     M \colon \mathcal{X} \to \mathbb{R}^n
-% $ the objective $
-%     d(M(x_i), M(x_j))
-% $ for positive, and $
-%     \max\bigl\{0, m - d(M(x_i), M(x_j)) \bigr\}
-% $ for negative pairs $(i, j)$, where $d$ is the distance in the image space of $M and
-% $m$ is desired margin between dissimilar objects.
-% ATTN (ivannz) this could use some survey reference from
+\citep{Hadsell2006DimensionalityRB}, which minimizes the objective
+\begin{equation*}
+    \mathcal{L}_{u v}(M)
+        = Y_{u v} \frac12 d_M(u, v)^2
+        + (1 - Y_{u v}) \frac12\max\{0, \rho - d_M(u, v) \}^2
+    \,,
+\end{equation*}
+with respect to $
+    M \colon \mathcal{X} \to \mathbb{R}^n
+$, where $
+    d_M(u, v) = d(c_u, c_v)
+$ is the distance between embeddings of the pair $(u, v)$, $
+    c_* = M(\{\tilde{x}_*(\tau)\})
+$, $Y_{u v}$ is a binary variable
+identifying whether the pair $(u, v)$ is positive, and $\rho$ is the soft minimal margin between
+dissimilar objects. The second term encourages separation of the embeddings in negative
+pairs and prevents \emph{mode collapse} in $M$, when the entities are mapped to the same
+point in the embedding space. $d(a, b)$ is the Euclidean distance, $
+    d(a, b)
+        = \sqrt{
+            \sum_k (a_k - b_k)^2
+        }
+$, as proposed in~\citep{Hadsell2006DimensionalityRB}.
+%  ATTN (ivannz) this could use some survey reference from
 % https://lilianweng.github.io/lil-log/2021/05/31/contrastive-representation-learning.html
+The sequences $\{\tilde{x}_u(\tau)\}$ and $\{\tilde{x}_v(\tau)\}$ of a pair with $Y_{u v} = 1$
+are obtained through random slice generation (Algorithm~\ref{alg-slce-ss}) from the \emph{same}
+observation $\{x_e(t)\}$, while in pairs with $Y_{u v} = 0$ the sequences are sampled from
+$\{x_e(t)\}$ and $\{x_g(t)\}$, respectively, for $e \neq g$.
 
-
-
-\revised{In the experiment section we compare the basic variant of the contrastive loss with alternative variants. The results of the comparison is presented in Section~\ref{sec-ablation}.}
-
-\textbf{Pair distance calculation.} In order to select negative samples, we need to compute the pairwise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them onto a hyper-sphere of the unit radius. \revised{For the normalized vectors, the squared Euclidean distance can be represented as $2(1- dot(x_1, x_1))$. To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks.}
+\revised{
+In the experiment section we compare the basic variant of the contrastive loss
+with alternative variants. The results of the comparison is presented in Section~\ref{sec-ablation}.
+}
 %(see Appendix~\ref{app-sec-pair-dist}).
 
-\textbf{Negative sampling} is a way to address the following challenge of the contrastive learning approach: using all pairs of samples can be inefficient: for example, some of the negative pairs are already distant enough, thus these pairs are not valuable for the training~\citep{SimoSerra2015DiscriminativeLO, Schroff2015FaceNetAU}. Hence, only a part of possible negative pairs in the batch are used during loss calculation. We compared the most popular choices for negative sampling applied for CoLES, see Section~\ref{sec-res} for details.
+\textbf{Negative sampling.} One challenge in contrastive learning approach is that positive pairs
+are overwhelmed by potential negative pairs. Furthermore, some of negative pairs are distant enough,
+to not provide any valuable feedback through $\mathcal{L}$ to $M$ during training, \citep{SimoSerra2015DiscriminativeLO,Schroff2015FaceNetAU}. We compare the common negative sampling
+methods in Section~\ref{sec-res}.
+
+\textbf{Pair distance calculation.}
+In order to draw negative samples, we need to compute the pairwise distance between all possible
+pairs of embedding vectors of a batch.
+
+In order to make this procedure computationally efficient we restrict $M$ to the class of maps that
+output vectors on a unit hyper-sphere in $\R^d$. Thus $
+    d_M(u, v)^2 = 2 - 2 M(\{\tilde{x}_u(t)\})^\top M(\{\tilde{x}_v(t)\})
+$.
+\revised{
+    For the normalized vectors, the squared Euclidean distance can be represented as $
+        2(1 - c_u^\top c_v))
+    $.
+    To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks.
+}
 
 \subsection{Encoder architecture} \label{sec-enc-arch}
 
