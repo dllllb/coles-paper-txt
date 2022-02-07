@@ -626,7 +626,7 @@ We compare our method with existing baselines on several publicly available data
 
 \textbf{Retail purchase history age group prediction}\footnote{https://ods.ai/competitions/x5-retailhero-uplift-modeling}. The task is to predict the age group of a client based on its retail purchase history. The group ratio is balanced in the dataset. Only labeled data is used. The dataset consists of 45,8M retail purchases representing 400k clients. Each purchase is characterized by time, product level, segment, amount, value, loyalty program points received.
 
-%\textbf{Scoring competition}\footnote{https://boosters.pro/championship/alfabattle2/overview}. The dataset of 443M anonymized credit card transactions representing 1.47M persons was used to predict the probability of credit product default. The label is known for 0.96M persons, other 0.51M are unlabelled. The default rate is 2.76\% in the dataset. Each transaction includes the set of date features, set of type features, and amount being charged.
+\revised{\textbf{Scoring competition}\footnote{https://boosters.pro/championship/alfabattle2/overview}. The dataset of 443M anonymized credit card transactions representing 1.47M persons was used to predict the probability of credit product default. The label is known for 0.96M persons, other 0.51M are unlabelled. The default rate is 2.76\% in the dataset. Each transaction includes the set of date features, set of type features, and amount being charged.}
 
 %As we can see in Figure~\ref{fig-seq-len} (Appendix~\ref{app-sec-data}), these datasets satisfy the power law assumption for the sequence length distribution of Theorem~\ref{thm:distribution}. Also, as shown in Figure~\ref{fig-subseq-kl} (Appendix~\ref{app-sec-data}) the datasets satisfy the periodicity and repeatability assumption.
 
@@ -669,7 +669,7 @@ Also note that additional plot (\ref{fig-subseq-kl-texts}) is provided as an exa
 For each dataset, we set apart 10\% persons from the labeled part of the data as the \textit{test set} that we used for evaluation of different models. The rest 90\% of labeled data and unlabeled data constitute our \textit{training set} used for learning. For all methods, a random search on 5-fold cross-validation over the training set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance are then chosen.
 For the learning of semi-supervised/self-supervised techniques (including CoLES), we used all transactions of training sets including unlabeled data. The unlabelled parts of the datasets were ignored while training supervised models.
 
-\subsubsection{Performance}
+\subsubsection{Training performance}
 
 Neural network training was performed on a single Tesla P-100 GPU card. For the training part of CoLES, the single training batch is processed in 142 milliseconds. For example, in the age group prediction dataset the single training batch contains 64 unique persons with 5 sub-sequences per person, i.e. 320 training sub-sequences in total, the mean number of transactions in a sub-sequence is 90, hence, each batch contains about 28800 transactions.
 
@@ -866,7 +866,9 @@ Note, that increasing the embedding size will also linearly increase the trainin
 \subsubsection{Self-supervised embeddings}
 
 We compared CoLES with baselines described in Section~\ref{sec-baselines} in two scenarios. First, we compared embeddings produced by the CoLES encoder with other types of embeddings and with manually created aggregates by using them as input features of a downstream task model (see Figure~\ref{fig-arch}, Phase 2a). The downstream task model is trained by LightGBM~\citep{Ke2017LightGBMAH} independently from the sequence encoder. As Table~\ref{tab-downstream-res-emb} demonstrates, our method generates sequence embeddings of sequential data that achieve strong performance results in comparison to the case of manually crafted features when used on the downstream tasks.
-In particular, Table~\ref{tab-downstream-res-emb} shows that even unsupervised CoLES embeddings perform on par and sometimes even better than hand-crafted features. Also note that CoLES embeddings consistenlty outperform embeddings produced by the other self-supervised baselines on each dataset.
+In particular, Table~\ref{tab-downstream-res-emb} shows that even unsupervised CoLES embeddings perform on par and sometimes even better than hand-crafted features. Also note that CoLES embeddings consistenlty outperform embeddings produced by the other self-supervised baselines on \revised{the four of the five considered datasets}.
+
+\revised{On the scoring dataset, which is significanly larger than the other datasets CoLES, CPC and RTD, significantly outperform hand-crafted features baseline. Since more recent information is more valuable for the credit scoring task CPC, wich is autoregressive method is also effective on this dataset. RTD method is trained on the unusual event detection task is also effective for credit scoring.}
 
 \revised{Simple hand-crafted features can achieve competitive results if the events have a clear structure for designing them. E.g. it is easy to calculate some aggregate statistics per MCC code for the card transactions history. In the commercial settings (which we consider in Section~\ref{sec-commercial}) we've seen different situation: it was hard to develop effective hand-crafted features for the transactions of the legal entities since it is not clear how they can be grouped. We discuss the difference between simple events (card transactions) and more complex events (transactions of the legal entities) at the end of Section~\ref{sec-commercial}.}
 
@@ -903,36 +905,37 @@ In particular, Table~\ref{tab-downstream-res-emb} shows that even unsupervised C
 \end{table}
 \end{comment}
 
-\begin{table}
+\begin{table*}
 \centering
 \caption{Quality of unsupervised embeddings as features for the downstream task}
-\begin{tabularx}{\linewidth}{Xcccc}
+\begin{tabularx}{\linewidth}{Xccccc}
 
 \toprule
 \textbf{Method} &
 \makecell{\textbf{Age} \\ \small{Accuracy}} &
 \makecell{\textbf{Churn} \\ \small{AUROC}} &
 \makecell{\textbf{Assess} \\ \small{Accuracy}} &
-\makecell{\textbf{Retail} \\ \small{Accuracy}}\\
+\makecell{\textbf{Retail} \\ \small{Accuracy}} &
+\makecell{\revised{\textbf{Scoring}} \\ \small{AUROC}}\\
 \midrule
 
-\textbf{Designed features} & $0.631$\tiny{$\pm 0.003$} & $0.825$\tiny{$\pm 0.004$} & \bm{$0.602$}\tiny{$\pm 0.005$} & \bm{$0.547$}\tiny{$\pm 0.001$} \\
+\textbf{Designed features} & $0.631$\tiny{$\pm 0.003$} & $0.825$\tiny{$\pm 0.004$} & \bm{$0.602$}\tiny{$\pm 0.005$} & \bm{$0.547$}\tiny{$\pm 0.001$} & $0.779$\tiny{$\pm 0.001$} \\
 
-\textbf{SOP} & $0.493$\tiny{$\pm 0.002$} & $0.782$\tiny{$\pm 0.005$} & $0.577$\tiny{$\pm 0.002$} & $0.428$\tiny{$\pm 0.001$}\\
+\textbf{SOP} & $0.493$\tiny{$\pm 0.002$} & $0.782$\tiny{$\pm 0.005$} & $0.577$\tiny{$\pm 0.002$} & $0.428$\tiny{$\pm 0.001$} & $0.724$\tiny{$\pm 0.001$} \\
 
-\textbf{NSP} & $0.622$\tiny{$\pm 0.004$} & $0.830$\tiny{$\pm 0.004$} & $0.581$\tiny{$\pm 0.003$} & $0.425$\tiny{$\pm 0.002$}\\
+\textbf{NSP} & $0.622$\tiny{$\pm 0.004$} & $0.830$\tiny{$\pm 0.004$} & $0.581$\tiny{$\pm 0.003$} & $0.425$\tiny{$\pm 0.002$} & $0.766$\tiny{$\pm 0.001$} \\
 
-\textbf{RTD} & $0.632$\tiny{$\pm 0.002$} & $0.801$\tiny{$\pm 0.004$} & $0.580$\tiny{$\pm 0.003$} & $0.520$\tiny{$\pm 0.001$}\\
+\textbf{RTD} & $0.632$\tiny{$\pm 0.002$} & $0.801$\tiny{$\pm 0.004$} & $0.580$\tiny{$\pm 0.003$} & $0.520$\tiny{$\pm 0.001$} & $0.791$\tiny{$\pm 0.001$} \\
 
-\textbf{CPC} & $0.594$\tiny{$\pm 0.002$} & $0.802$\tiny{$\pm 0.003$} & $0.588$\tiny{$\pm 0.002$} & $0.525$\tiny{$\pm 0.001$}\\
+\textbf{CPC} & $0.594$\tiny{$\pm 0.002$} & $0.802$\tiny{$\pm 0.003$} & $0.588$\tiny{$\pm 0.002$} & $0.525$\tiny{$\pm 0.001$} & $0.791$\tiny{$\pm 0.001$} \\
 
-\textbf{CoLES} & \bm{$0.638$}\tiny{$\pm 0.007$} & \bm{$0.843$}\tiny{$\pm 0.003$} & $0.601$\tiny{$\pm 0.002$} & $0.539$\tiny{$\pm 0.001$} \\
+\textbf{CoLES} & \bm{$0.638$}\tiny{$\pm 0.007$} & \bm{$0.843$}\tiny{$\pm 0.003$} & $0.601$\tiny{$\pm 0.002$} & $0.539$\tiny{$\pm 0.001$} & \bm{$0.792$}\tiny{$\pm 0.001$} \\
 
 \bottomrule
 \end{tabularx} \\
 \small{average test set quality metric and its standard deviation for 5 runs on different folds is shown}
 \label{tab-downstream-res-emb}
-\end{table}
+\end{table*}
 
 \subsubsection{Fine-tuned embeddings}
 

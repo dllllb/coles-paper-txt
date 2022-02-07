@@ -168,6 +168,8 @@ We've rewritten the introduction and made more clear statements about the benefi
 
 We've updated the Section 4.2.1 and added additional experiments comparing desing choices of the method with possible alternatives.
 
-We also fixed different presentation issues and additionally proof-read the paper
+We've also tested our method on the additional credit scoring dataset, which is the larges public dataset available for the transactional data. We show that self-supervised embeddings can be significantly better than the hand-crafted features on the sufficiently large dataset.
+
+We've fixed different presentation issues and additionally proof-read the paper
 
 The significant changes made to the paper are outlined in magenta.
