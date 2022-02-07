@@ -498,28 +498,27 @@ sequences -- as negatives.
 % negative pairs (not all negative pairs are considered, due to negative sampling).
 
 %!!! REMOVED BLOCK
-
-\iffalse
-    \begin{algorithm}
-        \SetAlgoLined
-        \textbf{hyperparameters:}
-            $k$: number of sub-sequences to be produced.
-        \\
-        \textbf{input:}
-            A sequence $S$ of length $l$.
-        \\
-        \textbf{output:}
-            $S_1,...,S_k$: sub-sequences of $S$.
-        \\
-        \BlankLine
-        Generate vector $inds$ of length $l$ with random integers from [1,k].\\
-        \For{$i\leftarrow 1$ \KwTo $k$}{
-            $S_i = S[inds == i]$
-        }
-        \caption{Disjointed sub-sequences generation strategy}
-        \label{alg-disj-ss}
-    \end{algorithm}
-\fi
+\begin{comment}
+\begin{algorithm}
+    \SetAlgoLined
+    \textbf{hyperparameters:}
+        $k$: number of sub-sequences to be produced.
+    \\
+    \textbf{input:}
+        A sequence $S$ of length $l$.
+    \\
+    \textbf{output:}
+        $S_1,...,S_k$: sub-sequences of $S$.
+    \\
+    \BlankLine
+    Generate vector $inds$ of length $l$ with random integers from [1,k].\\
+    \For{$i\leftarrow 1$ \KwTo $k$}{
+        $S_i = S[inds == i]$
+    }
+    \caption{Disjointed sub-sequences generation strategy}
+    \label{alg-disj-ss}
+\end{algorithm}
+\end{comment}
 
 \revised{
 In the experiment section we consider several baseline empirical strategies for the sub-sequence
@@ -678,8 +677,6 @@ Neural network training was performed on a single Tesla P-100 GPU card. For the 
 
 Unless we explicitly specify, we use contrastive loss and random slices pair generation strategy for CoLES in our experiments (see Section~\ref{sec-res} for motivation). The final set of hyper-parameters used for CoLES is shown in the Table \ref{tab-hyper}.
 
-%\iffalse
-
 \begin{table}
 \centering
 \caption{Hyper-parameters for CoLES training}
@@ -699,8 +696,6 @@ Unless we explicitly specify, we use contrastive loss and random slices pair gen
 \small{For all methods, a random search on 5-fold cross-validation over the train set is used for hyper-parameter selection. The number of sub-sequences generated for each sequence was always 5 for each dataset.}
 \label{tab-hyper}
 \end{table}
-
-%\fi
 
 \subsection{Baselines} \label{sec-baselines}
 
@@ -1131,7 +1126,7 @@ Furthermore, the proposed method of generating embeddings is very useful in prod
 More generally, the proposed method can be applied to the event sequence data that is extensively used by the core businesses of many large companies, including financial institutions, internet companies, retail and telecommunications.
 
 %!!! SECTION IS REMOVED
-\iffalse
+\begin{comment}
 
 \section*{Broader Impact}
 
@@ -1140,15 +1135,13 @@ This paper focused on developing a general novel contrastive learning method for
 Furthermore, our method has strong fairness mechanisms built into it since it focuses on the analysis of the granular event sequences and, therefore, does not have to deal with the problem of biased decisions and predictions stemming from poorly computed aggregate data leading to various types of social biases.
 
 Another advantage of using event sequence based embeddings, instead of the raw explicit event data, is that it is exceptionally difficult to restore the exact input sequence from its embeddings due to the fact, that lots of information is dropped during the transformation to embeddings. Therefore, the usage of embeddings leads to better privacy and data security for the end-users than when working directly with the raw event data, and all this is achieved without sacrificing valuable information for downstream tasks.
-
-\fi
+\end{comment}
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{sigmod2022}
 
 %!!! APPENDIX IS REMOVED
-
-\iffalse
+\begin{comment}
 
 \clearpage
 
@@ -1159,9 +1152,6 @@ Another advantage of using event sequence based embeddings, instead of the raw e
 In order to select negative samples, we need to compute pair-wise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them on a hyper-sphere of unit radius. Since $D(A,B) = \sqrt{\sum_i(A_i - B_i)^2} = \sqrt{\sum_i A_i^2 + \sum_i B_i^2 - 2\sum_i A_i B_i} $ and $||A||= ||B||=1$, to compute the euclidean distance we only need to compute: $\sqrt{2 - 2(A \cdot B)}$.
 
 To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks. Hence, the computational complexity of the negative pair selection is $O(n^2h)$ where $h$ is the size of the output embeddings and $n$ is the size of the batch.
-
-%!!! REMOVED BLOCK
-\iffalse
 
 \section{Theoretical analysis} \label{sec-theory}
 
@@ -1237,11 +1227,6 @@ The latter inequality in these calculations follows from the fact that $\left (\
 
 \end{proof}
 
-\fi
-
-%!!! REMOVED BLOCK
-\iffalse
-
 \section{Data properties} \label{app-sec-data}
 
 To check that sequence lengths of the considered datasets follow the power-low distribution we measured their distribution of lengths. As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to the power-law distribution for every considered dataset.
@@ -1252,8 +1237,6 @@ To check that sequence lengths of the considered datasets follow the power-low d
   \includegraphics[width=\linewidth]{figures/all_scenario_events_per_client.pdf}
   \label{fig-seq-len}
 \end{figure}
-
-\fi
 
 \section{Experiment setup} \label{app-sec-exp-setup}
 
@@ -1288,9 +1271,6 @@ Note, that hand-crafted features contain information about user spending profile
 
 \section{Results} \label{app-sec-res}
 
-% !!! REMOVED BLOCK
-\iffalse
-
 \subsection{Semi-supervised setup} \label{app-sec-semi}
 
 To evaluate our method in case of the restricted amount of labeled data, we use only part of the available target labels for the semi-supervised experiment, see Section~\ref{sec-res} for details. As in the case of the supervised setup, we compare the proposed method with LigthGBM over hand-crafted features, CPC, and supervised learning without pre-training. In figure \ref{fig-semi} we provide learning curves for all considered datasets.
@@ -1320,11 +1300,6 @@ To evaluate our method in case of the restricted amount of labeled data, we use 
   \caption{Model quality for different dataset sizes} \small{The rightmost point corresponds to all labels and supervised setup.}
   \label{fig-semi}
 \end{figure}
-
-\fi
-
-% !!! REMOVED BLOCK
-\iffalse
 
 \subsection{Embedding visualization} \label{app-sec-vis}
 
@@ -1364,10 +1339,8 @@ tSNE points from the churn prediction dataset are presented in Figure \ref{fig-t
   \end{subfigure}
 \end{figure}
 
-\fi
-
 \clearpage
 
-\fi
+\end{comment}
 
 \end{document}
