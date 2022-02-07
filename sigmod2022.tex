@@ -535,8 +535,11 @@ in Section~\ref{sec-ablation}.
 \textbf{Contrastive loss} We consider a classical variant of the contrastive loss, proposed in
 \citep{Hadsell2006DimensionalityRB}: $
     \mathcal{L}
-        = (1 - Y) \frac12(D_W^i)^2 + Y \frac12\{max(0,m-D_W^i)\}^2
-$, where $D_W^i$ is a distance function between embeddings in i-th labeled sample pair, $Y$ is a binary variable identifying that the pair is positive. \revised{The main purpose of the negative pair closeness penalty is to prevent mode collapse when all entities are placed at the same point in the embedding space.} As proposed in~\citep{Hadsell2006DimensionalityRB}, we use euclidean distance function: $D_W^i = D(A,B) = \sqrt{\sum_i(A_i - B_i)^2}$.
+        = (1 - Y) \frac12 (D_W^i)^2
+        + Y \frac12\max\{0, m - D_W^i \}^2
+$, where $D_W^i$ is a distance function between embeddings in $i$-th labeled sample pair, the $Y$ is a binary variable identifying that the pair is positive. \revised{The main purpose of the negative pair closeness penalty is to prevent mode collapse when all entities are placed at the same point in the embedding space.} As proposed in~\citep{Hadsell2006DimensionalityRB}, we use euclidean distance function: $
+    D_W^i = D(A, B) = \sqrt{\sum_i(A_i - B_i)^2}
+$.
 % has a contrastive term for negative pairs of embeddings, which penalizes the model only if
 %  the distance between embeddings of negative pair is less than a margin $m>0$:
 
