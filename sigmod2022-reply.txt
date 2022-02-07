@@ -156,20 +156,23 @@ Major Revision Items:
 
 Revised paper cover letter
 
-We significantly revised the paper according to the reviewers comments. We've made the following updates in the revised version of the paper:
+We revised the paper according to the reviewers comments and improved the clarity of presentation. We've made the following updates in the revised version of the paper:
 
-We've updated the Section 3.2 and Section 3.3 to make training objectives and subsample generation algorithm more clear.
+(Reviewer3 O1) We've updated the Section 3.2 and Section 3.3 to make training objectives and subsample generation algorithm more clear.
 
-Please note that we address the critical assumption made about sequences' data distributions in the following way: In Section 4.0.2 we measure the KL-divergence between two kinds of samples: (1) between random slices of the same sequence, generated using a modified version of the Algorithm 1 where overlapping events are dropped and (2) between random sub-samples taken from different sequences. We show that for all consdered dataset the mean KL-divergence is significantly smaller than for the textual data, which does not have periodicity and repeatability properties.
+(Reviewer3 O2, as also voiced by the others) We address the critical assumption made about sequences' data distributions in the following way: In Section 4.0.2 we measure the KL-divergence: 
+(1) between random slices of the same sequence. Random slices have been generated using a modified version of the Algorithm 1 (overlapping events are dropped) 
+(2) between random sub-samples taken from different sequences. 
+Results obtained for all considered datasets of sequential data show that mean KL-divergence is significantly smaller than for the textual data, which does not have periodicity and repeatability properties.
 
-We've extended Section 4.3.1 and described the scalability approaches used during the deployment of our method in our organization
+(Reviewer3 O4) We've extended Section 4.3.1 and described the scalability approaches used during the deployment of our method in our organization
 
-We've rewritten the introduction and made more clear statements about the benefits of using sequence embeddings for the real-word scenarios of bigdata analysis and predictive modelling.
+(Reviewer5 O1) We've rewritten the introduction section and made more clear statements about the benefits of using sequence embeddings for the real-word scenarios of big data analysis and predictive modelling.
 
-We've updated the Section 4.2.1 and added additional experiments comparing desing choices of the method with possible alternatives.
+(Reviewer5 O2 and O3, also Reviewer4 O4) We've updated the Section 4.2.1 and added additional experiments comparing design choices of the method with possible alternatives.
 
-We've also tested our method on the additional credit scoring dataset, which is the larges public dataset available for the transactional data. We show that self-supervised embeddings can be significantly better than the hand-crafted features on the sufficiently large dataset.
+(Reviewer4 O5) We've tested our method on the additional credit scoring dataset, which is the largest public dataset available for the transactional data. We show that self-supervised embeddings can perform significantly better than the hand-crafted features on the sufficiently large dataset.
 
-We've fixed different presentation issues and additionally proof-read the paper
+We also fixed different presentation issues and additionally proof-read the paper.
 
-The significant changes made to the paper are outlined in magenta.
+The significant changes made to the paper are outlined in magenta (we did not mark introduction since we completely rewritten it).
