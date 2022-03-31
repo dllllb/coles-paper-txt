@@ -9,4 +9,5 @@
 *.log
 /*.pdf
 *.synctex.gz
-
+*.dvi
+*.xcp
