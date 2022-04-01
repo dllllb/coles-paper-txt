@@ -1194,19 +1194,19 @@ volumes of labeled data.
   \centering
   \begin{subfigure}{0.25\linewidth}
     \caption{Age group}
-    \includegraphics[width=\linewidth]{figures/ss_age_pred_per.pdf}
+    \includegraphics[width=\linewidth]{figures/ss_age_pred.pdf}
   \end{subfigure}%
   \begin{subfigure}{0.25\linewidth}
     \caption{Churn}
-    \includegraphics[width=\linewidth]{figures/ss_rosbank_per.pdf}
+    \includegraphics[width=\linewidth]{figures/ss_rosbank.pdf}
   \end{subfigure}%
   \begin{subfigure}{0.25\linewidth}
     \caption{Assessment}
-    \includegraphics[width=\linewidth]{figures/ss_bowl2019_per.pdf}
+    \includegraphics[width=\linewidth]{figures/ss_bowl2019.pdf}
   \end{subfigure}%
   \begin{subfigure}{0.25\linewidth}
     \caption{Retail}
-    \includegraphics[width=\linewidth]{figures/ss_x5_per.pdf}
+    \includegraphics[width=\linewidth]{figures/ss_x5.pdf}
   \end{subfigure}
   \caption{
     Model quality for different dataset sizes
@@ -1479,236 +1479,7 @@ performing complex and time-consuming computations on the raw event data.
 
 % More generally, the proposed method can be applied to the event sequence data that is extensively used by the core businesses of many large companies, including financial institutions, internet companies, retail and telecommunications.
 
-%!!! SECTION IS REMOVED
-\begin{comment}
-
-\section*{Broader Impact}
-
-This paper focused on developing a general novel contrastive learning method for the task of
-self-supervised learning for the discrete event sequences. Therefore, it can be applied to
-a broad range of practical applications, many of them having strong social and business
-impacts, such as educational applications dealing with logs of educational activities of
-students, security applications dealing with logs of internet access activities and system
-logs protecting users from various types of malicious cyber-attacks, logs of online games,
-retail purchase histories, bank transactions and various other types of sequences. 
-
-Furthermore, our method has strong fairness mechanisms built into it since it focuses on
-the analysis of the granular event sequences and, therefore, does not have to deal with
-the problem of biased decisions and predictions stemming from poorly computed aggregate
-data leading to various types of social biases.
-
-Another advantage of using event sequence based embeddings, instead of the raw explicit
-event data, is that it is exceptionally difficult to restore the exact input sequence
-from its embeddings due to the fact, that much information is dropped during embedding.
-Therefore, the use of embeddings leads to better privacy and data security for the end-users
-than working directly with the raw event data, and all this is achieved without sacrificing
-information valuable for downstream tasks.
-\end{comment}
-
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{sigmod2022}
-
-%!!! APPENDIX IS REMOVED
-\begin{comment}
-
-\clearpage
-
-\appendix
-
-\section{Pair distance calculation} \label{app-sec-pair-dist}
-
-In order to select negative samples, we need to compute pair-wise distance between all possible pairs of embedding vectors of a batch. For the purpose of making this procedure more computationally effective we perform normalization of the embedding vectors, i.e. project them on a hyper-sphere of unit radius. Since $D(A,B) = \sqrt{\sum_i(A_i - B_i)^2} = \sqrt{\sum_i A_i^2 + \sum_i B_i^2 - 2\sum_i A_i B_i} $ and $||A||= ||B||=1$, to compute the euclidean distance we only need to compute: $\sqrt{2 - 2(A \cdot B)}$.
-
-To compute the dot product between all pairs in a batch we just need to multiply the matrix of all embedding vectors of a batch by itself transposed, which is a highly optimized computational procedure in most modern deep learning frameworks. Hence, the computational complexity of the negative pair selection is $O(n^2h)$ where $h$ is the size of the output embeddings and $n$ is the size of the batch.
-
-\section{Theoretical analysis} \label{sec-theory}
-
-Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$, which generates sequence of all events in the potentially infinite life of entity $e$. That is, we assume that $X_e(t)=\widehat{X}_e(t+s_e)$ for some random starting point $s_e\in \{0,1,\ldots\}$ and horizon $T_e$. Thus we observe, in our data, segment $[s_e+1,s_e+T_e]$ of the life of $e$. We also make the following Assumptions:
-\begin{enumerate}
-    \item Process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$ is cyclostationary (in the strict sense)~\citep{Gardner2006Cyclostationarity} with some period $\widehat{T}$.
-    \item Starting $s_e$ is independent, and the distribution of $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$.
-    \item Horizon $T_e$ is independent and follows a power--law distribution on $[m,\infty]$.
-\end{enumerate}
-These assumptions correspond to a scenario where some persons become clients of a service at a random moment and for some random time span and their behaviour obey some periodicity.    %First assumption is $\ldots$ 
-\begin{thm}\label{thm:distribution}
-If sequences $\{x_e(t)\}$ in the dataset are generated from latent processes $\{\widehat{X}_e(t)\}$ as described above with a lower bound $m$ for the length of a sequence $\{x_e(t)\}$, then sub-sequences obtained by Algorithm~\ref{alg-slce-ss} from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the length $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
-\begin{multline}\label{probability_ratio}
-    \left (\frac{m-1}{m}\right )^{-\alpha} p(T_e=k)\leq p(T'_e=k) \leq \left(\frac{k}{k-1/2}\right )^{-\alpha} p(T_e=k)  \quad \\ \mbox{for any } k\in [m,\infty].
-\end{multline}
-\end{thm}
-This theorem means that a sub-sequence obtained by Algorithm~\ref{alg-slce-ss} is a representative sample of entity~$e$ and follows its latent distribution $P_e$. Combining this result with generalization guarantees proved for setting with explicitly observed positive pairs~(\cite{Saunshi2019ICML}), we obtain theoretical background for our implicit self-supervised setting.   
-%Further in this paper, we empirically examine whether pairs of such sub-sequences are useful for contrastive learning-based self-supervision.
-See Appendix~\ref{app-sec-proof} for the proof of Theorem~\ref{thm:distribution}.
-
-\section{Proof of Theorem 1} \label{app-sec-proof}
-
-In this section, we provide proof of Theorem 1 (Section~\ref{sec-theory}) that justifies the Random Slices sub-sequence generation strategy proposed in the paper.
-
-%First, we give the statement of Theorem~1 for convenience.
-
-%Assume that process $\{X_e(t)\}_{t=1}^{T_e}$ is a segment of a latent process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$, which generates sequence of all events in the potentially infinite life of entity $e$. That is, we assume that $X_e(t)=\widehat{X}_e(t+s_e)$ for some random starting point $s_e\in \{0,1,\ldots\}$ and horizon $T_e$. Thus we observe, in our data, segment $[s_e+1,s_e+T_e]$ of the life of $e$. We also make the following Assumptions:
-%\begin{enumerate}
-%    \item Process $\{\widehat{X}_e(t)\}_{t=1}^{\infty}$ is cyclostationary (in the strict sense)~\citep{Gardner2006Cyclostationarity} with some period $\widehat{T}$.
-%    \item Starting $s_e$ is independent, and the distribution of $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$.
-%    \item Horizon $T_e$ is independent and follows a power--law distribution on $[m,\infty]$.
-%\end{enumerate}
-%\begin{thm}
-%If sequences $\{x_e(t)\}$ in the dataset are samples of processes $\{X_e(t)\}$, then sub-sequences obtained by the Random Slices generation strategy from $\{x_e(t)\}$ follow the same distribution as $\{x_e(t)\}$ up to a slight alteration of the distribution of the horizon $T_e$. Namely, if $T_e$ follows power law with an exponent $\alpha <-1$, then the density function for the length $T'_e$ of a sub-sequence satisfy 
-%\begin{equation}\label{probability_ratio}
-%\P(T'_e=k)/\P(T_e=k)\in \left [\left (\frac{m-1}{m}\right %)^{-\alpha},\left (\frac{k}{k-1/2}\right )^{-\alpha}\right %].    
-%\end{equation}
-
-%\end{thm}
-
-\begin{proof}
-First, we state the following straightforward lemma:
-\begin{lem}\label{stationary}
-Let a stochastic process $\{Y(t)\}_{t=1}^{\infty}$ be a shift of another stochastic process $\{\widehat{Y}(t)\}_{t=1}^{\infty}$ by independent random time $s$, i.e. $Y(t) = \widehat{Y}(t+s)$ with integer $s\geq 0$. If process $\{\widehat{Y}(t)\}_{t=1}^{\infty}$ is cyclostationary with period $\widehat{T}$ and $(s_e \mod \widehat{T})$ is uniform over $[0,\widehat{T}-1]$, then process $\{Y(t)\}_{t=1}^{\infty}$ is stationary.
-\end{lem}
-Lemma~\ref{stationary} implies that process $\{X_e(t)\}_{t=1}^{T_e}$ is stationary, and all its segments $\{X_e(t)\}_{t=s'+1}^{T'_e+s'}$ of a given length $T'_e$ define the same distribution over sequences as its starting segment $\{X_e(t)\}_{t=1}^{T'_e}$ does. Furthermore, integrating over $s'$, we conclude that the conditional distribution of a sub-sequence obtained via Random Slices generation strategy given its length $T'_e$ follows the process $\{X_e(t)\}_{t=1}^{T'_e}$. To finish the proof, it remains to prove Equation~\ref{probability_ratio}.
-
-Assume $\P(T_e=k)\propto k^{\alpha}$ for $k\in [m,\infty]$. By the law of total probability, we have $\P(T'_e=k_0)= \sum_{k}\P(T_e=k)\P(T'_e=k_0\mid T_e=k)$, that is,
-$$
-\P(T'_e=k_0) = C \sum_{k=k_0}^{\infty} k^{\alpha-1},
-$$
-where $C$ is the normalization constant. To estimate the sum of the series, notice that
-\begin{equation}\label{int_inequal}
-\int_{k_0-\frac{1}{2}}^\infty x^{\alpha-1} dx > \sum_{k=k_0}^{\infty} k^{\alpha-1} > \int_{k_0}^\infty x^{\alpha-1} dx,    
-\end{equation}
-where the former inequality follows from the fact that $\int_{k-1/2}^{k+1/2} x^{\alpha-1}> k^{\alpha-1}$ as long as function $f(x)=x^{\alpha-1}$ is convex. After integration, we rewrite Equation~\ref{int_inequal} as follows:
-\begin{equation}\label{inequal}
-\frac{-1}{\alpha} \left ( k_0-\frac{1}{2}\right )^{\alpha} > \sum_{k=k_0}^{\infty} k^{\alpha-1} > \frac{-1}{\alpha} k_0^{\alpha}. \end{equation}
-Using these inequalities, we obtain the upper bound for $\P(T'_e=k)%/\P(T_e=k)
-$ in the following way:
-\begin{multline*}
-\P(T'_e=k_0) = \sum_{k=k_0}^{\infty} k^{\alpha-1} / \sum_{l=m}^\infty \sum_{k=l}^{\infty} k^{\alpha-1} < \\
-< \frac{-1}{\alpha} \left ( k_0-\frac{1}{2}\right )^{\alpha} / \sum_{l=m}^\infty \frac{-1}{\alpha} l^{\alpha} = \\
-=\left (\frac{k_0}{k_0-1/2}\right )^{-\alpha} k_0^\alpha/\sum_{l=m}^\infty l^{\alpha} = \left (\frac{k_0}{k_0-1/2}\right )^{-\alpha} \P(T_e=k_0).
-\end{multline*}
-At last, the lower bound for $\P(T'_e=k)%/\P(T_e=k)
-$ can be obtained using Equation~\ref{inequal} as follows:
-\begin{multline*}
-\P(T'_e=k_0) = \sum_{k=k_0}^{\infty} k^{\alpha-1} / \sum_{l=m}^\infty \sum_{k=l}^{\infty} k^{\alpha-1} > k_0^{\alpha} / \sum_{l=m}^\infty  \left (l-\frac{1}{2}\right )^{\alpha} > \\
-> \left (\frac{m-1/2}{m}\right )^{-\alpha} k_0^\alpha/\sum_{l=m}^\infty l^{\alpha} = \left (\frac{m-1/2}{m}\right )^{-\alpha} \P(T_e=k_0).
-\end{multline*}
-The latter inequality in these calculations follows from the fact that $\left (\frac{l-\frac{1}{2}}{l}\right )^{\alpha}<\left (\frac{m-\frac{1}{2}}{m}\right )^{\alpha}$ for $l>m$.
-
-\end{proof}
-
-\section{Data properties} \label{app-sec-data}
-
-To check that sequence lengths of the considered datasets follow the power-low distribution we measured their distribution of lengths. As Figure~\ref{fig-seq-len} shows, the event sequence length distribution is close to the power-law distribution for every considered dataset.
-
-\begin{figure}
-  \centering
-  \caption{Event sequence length distribution}
-  \includegraphics[width=\linewidth]{figures/all_scenario_events_per_client.pdf}
-  \label{fig-seq-len}
-\end{figure}
-
-\section{Experiment setup} \label{app-sec-exp-setup}
-
-For all methods, a random search on 5-fold cross-validation over the train set is used for hyper-parameter selection. The hyper-parameters with the best out-of-fold performance on the train set are then chosen. The final set of hyper-parameters used for CoLES is shown in Table \ref{tab-hyper}. The number of sub-sequences generated for each sequence was always 5 for each dataset.
-
-\begin{table}
-\centering
-\caption{Hyper-parameters for CoLES training}
-\begin{tabularx}{\linewidth}{Xcccc}
-\toprule
-\textbf{Dataset} & \textbf{Age group} & \textbf{Churn} & \textbf{Assessment} & \textbf{Retail} \\
-\midrule
-\textbf{Output size} & 800 & 1024 & 100 & 800 \\
-\textbf{Learning rate} & 0.001 & 0.004 & 0.002 & 0.002 \\
-\textbf{N samples in batch} & 64 & 128 & 256 & 256 \\
-\textbf{N epochs} & 150 & 60 & 100 & 30 \\
-\textbf{Min sequence length} & 25 & 15 & 100 & 30 \\
-\textbf{Max sequence length} & 200 & 150 & 500 & 180 \\
-\textbf{Encoder} & GRU & LSTM & GRU & GRU \\
-\bottomrule
-\end{tabularx}
-\label{tab-hyper}
-\end{table}
-
-\subsection{Hand-crafted features} \label{app-sec-hand}
-
-Here we describe the details of producing hand-crafted features. All attributes of each transaction are either numerical (e. g. amount) or categorical (e.g. merchant type (MCC code), transaction type, etc.). 
-For the numerical type of attribute we apply aggregation functions, such as 'sum', 'mean', 'std', 'min', 'max', over all transactions per user. For example, if we apply 'sum' for the numerical field 'amount' we obtain a feature 'sum of all transaction amounts per user'. 
-For the categorical type of attribute we apply aggregation functions in a slightly different way. For each unique value of categorical attribute we apply aggregation functions, such as 'count', 'mean', 'std' over all transactions per user' numerical attribute. For example, if we apply 'mean' for the numerical attribute 'amount' grouped by categorical attribute 'MCC code' we obtain a feature 'mean amount of all transactions for each MCC code per user'. 
-For example, for age prediction task we have one categorical attribute (small group) with 200 unique values, combining it with amount we can produce $200 * 3$ features ('group0 x amount x count',  'group1 x amount x count', ..., 'group199 x amount x count', 'group0 x amount x mean', ...). In total we use approx 605 features for this task. % For gender prediction task we have two categorical features: 'MCC code' with approx 200 unique values and 'tr type' with approx 100 unique values. So in total we use $200 * 3 + 100 * 3 + 5 = 905$ features.
-Note, that hand-crafted features contain information about user spending profile but omit information about transactions temporal order.
-
-\section{Results} \label{app-sec-res}
-
-\subsection{Semi-supervised setup} \label{app-sec-semi}
-
-To evaluate our method in case of the restricted amount of labeled data, we use only part of the available target labels for the semi-supervised experiment, see Section~\ref{sec-res} for details. As in the case of the supervised setup, we compare the proposed method with LigthGBM over hand-crafted features, CPC, and supervised learning without pre-training. In figure \ref{fig-semi} we provide learning curves for all considered datasets.
-
-\begin{figure}
-  \centering
-  \begin{subfigure}{0.5\linewidth}
-    \caption{Age group}
-    \includegraphics[width=\linewidth]{figures/ss_age_pred_per.pdf}
-    \label{fig-semi-age2}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\linewidth}
-    \caption{Churn}
-    \includegraphics[width=\linewidth]{figures/ss_rosbank_per.pdf}
-    \label{fig-semi-churn}
-  \end{subfigure}
-  \begin{subfigure}{0.5\linewidth}
-    \caption{Assessment}
-    \includegraphics[width=\linewidth]{figures/ss_bowl2019_per.pdf}
-    \label{fig-semi-assessment2}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\linewidth}
-    \caption{Retail}
-    \includegraphics[width=\linewidth]{figures/ss_x5_per.pdf}
-    \label{fig-semi-retail}
-  \end{subfigure}
-  \caption{Model quality for different dataset sizes} \small{The rightmost point corresponds to all labels and supervised setup.}
-  \label{fig-semi}
-\end{figure}
-
-\subsection{Embedding visualization} \label{app-sec-vis}
-
-In order to visualize CoLES embeddings in 2-dimensional space, we applied tSNE transformation~\citep{Maaten2008VisualizingDU} on them. tSNE transforms high--dimensional space to low--dimensional based on local relationships between points, so neighbor vectors in high-dimensional embedding space are pushed to be close in 2-dimensional space. We colorized 2-dimensional vectors using the target values of the datasets.
-
-Note, that embeddings was learned in a fully self-supervised way from raw user transactions without any target information. The sequence of transactions represent user' behavior, thus the CoLES model captures behavioral patterns and outputs embeddings of users with similar patterns nearby.
-As shown below, local clusters in embedding space correspond to the distribution of user's attributes either age or churn fact.
-
-tSNE vectors from the age prediction dataset are presented in Figure \ref{fig-tsne-age2}. We can observe 4 clusters: clusters for group '1' and '2' are on the opposite side of the cloud, clusters for groups '2' and '3' are in the middle.
-
-Taking into account that age is an ordinal attribute, we can make an assumption about the ordering of age groups: $age(1) < age(3) < age(0) < age(2)$ or vice versa. ($age(bin)$ returns age of user for specific group).
-
-tSNE points from the churn prediction dataset are presented in Figure \ref{fig-tsne-churn}. There are areas where one type of label dominates over the other.
-
-\begin{figure}
-  \centering
-  \caption{2D tSNE mapping of CoLES embeddings colored by target labels}
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Age group}
-    \includegraphics[width=\textwidth]{figures/iclr-age-pred-tsne.pdf}
-    \label{fig-tsne-age2}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Churn}
-    \includegraphics[width=\textwidth]{figures/iclr-churn-tsne.pdf}
-    \label{fig-tsne-churn}
-  \end{subfigure}
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Assessment}
-    \includegraphics[width=\textwidth]{figures/iclr-bowl-tsne-accuracy_group.pdf}
-    \label{fig-tsne-bowl}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-    \caption{Retail}
-    \includegraphics[width=\textwidth]{figures/iclr-x5-tsne-age_bin.pdf}
-    \label{fig-tsne-x5}
-  \end{subfigure}
-\end{figure}
-
-\clearpage
-
-\end{comment}
 
 \end{document}
